@@ -1,3 +1,5 @@
+import { Link } from 'react-router-dom'
+
 function Sidebar() {
   return (
     <aside className="w-64 bg-zinc-900 border-r border-zinc-800 p-4">
@@ -6,17 +8,33 @@ function Sidebar() {
       </h2>
 
       <nav className="flex flex-col gap-2">
-        <button className="text-left p-2 rounded hover:bg-zinc-800 transition">
-          Biblioteca
-        </button>
+        <Link 
+        to="/" 
+        className="p-2 rounded hover:bg-zinc-800 transition"
+        >
+          Home
+        </Link>
 
-        <button className="text-left p-2 rounded hover:bg-zinc-800 transition">
+        <Link 
+        to="/libraries" 
+        className="p-2 rounded hover:bg-zinc-800 transition"
+        >
+          Bibliotecas
+        </Link>
+
+        <Link 
+        to="/volumes" 
+        className="p-2 rounded hover:bg-zinc-800 transition"
+        >
           Volumes
-        </button>
+        </Link>
 
-        <button className="text-left p-2 rounded hover:bg-zinc-800 transition">
+        <Link 
+        to="/settings" 
+        className="p-2 rounded hover:bg-zinc-800 transition"
+        >
           Configurações
-        </button>
+        </Link>
       </nav>
     </aside>
   )
