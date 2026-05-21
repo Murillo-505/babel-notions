@@ -29,6 +29,10 @@ const libraries = [
 ]
 
 app.get('/libraries', (request, response) => {
+  const { id } = request.params
+
+  const library = libraries.find((item) => item.id === Number(id))
+  
   response.json(libraries)
 })
 
