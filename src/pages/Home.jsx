@@ -1,15 +1,28 @@
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 
 import LibraryCard from '../components/LibraryCard'
 import SearchBar from '../components/SearchBar'
 
-import { libraries } from '../data/libraries'
+import { getLibraries } from '../services/libraryService'
 
 function Home() {
   const [search, setSearch] = useState('')
+  const [libraries, setLibraries] = useState([])
 
-  const filteredLibraries = libraries.filter((library) =>
-    library.name.toLowerCase().includes(search.toLowerCase())
+  useEffect(() => {
+    async function loadLibraries() {
+      const data = await getLibraries()
+      setLibraries(data)
+    }
+
+    loadLibraries()
+  }, [])
+
+  const filteredLibraries = libraries.filter(
+    (library) =>
+      library.name
+        .toLowerCase()
+        .includes(search.toLowerCase())
   )
 
   return (
@@ -25,7 +38,9 @@ function Home() {
       <div className="mb-6">
         <SearchBar
           value={search}
-          onChange={(event) => setSearch(event.target.value)}
+          onChange={(event) =>
+            setSearch(event.target.value)
+          }
         />
       </div>
 

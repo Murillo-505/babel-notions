@@ -1,43 +1,57 @@
+import { useEffect, useState } from 'react'
 import { useParams, Link } from 'react-router-dom'
 
-import { libraries } from '../data/libraries'
 import VolumeCard from '../components/VolumeCard'
+import { getLibraryById } from '../services/libraryService'
 
 function LibraryDetails() {
   const { id } = useParams()
 
-  const library = libraries.find(
-    (item) => item.id === Number(id)
-  )
+  const [library, setLibrary] =
+    useState(null)
 
-  if(!library){
-    return <h1>Biblioteca não encontrada</h1>
+  useEffect(() => {
+    async function loadLibrary() {
+      const data =
+        await getLibraryById(id)
+
+      setLibrary(data)
+    }
+
+    loadLibrary()
+  }, [id])
+
+  if (!library) {
+    return <h1>Carregando...</h1>
   }
 
-  return(
+  return (
     <div>
-      <Link to={"/"} className='text-zinc-400 hover:text-white transition'>
+      <Link
+        to="/"
+        className="text-zinc-400 hover:text-white transition"
+      >
         ← Voltar
       </Link>
 
-      <div>
-        <h1 className='text-4x1 font-bold mb-4'>
+      <div className="mt-4 mb-8">
+        <h1 className="text-4xl font-bold mb-2">
           {library.name}
         </h1>
 
-        <p className='text-zinc-400'>
+        <p className="text-zinc-400">
           {library.description}
         </p>
       </div>
 
       <section>
-        <h2 className='text-2xl font-bold mb-4'>
+        <h2 className="text-2xl font-bold mb-4">
           Volumes
         </h2>
 
-        <div>
+        <div className="grid grid-cols-3 gap-4">
           {library.volumes.map((volume) => (
-            <VolumeCard 
+            <VolumeCard
               key={volume.id}
               title={volume.title}
             />
