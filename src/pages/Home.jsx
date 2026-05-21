@@ -33,6 +33,7 @@ function Home() {
         {filteredLibraries.map((library) => (
           <LibraryCard
             key={library.id}
+            id={library.id}
             name={library.name}
             description={library.description}
           />

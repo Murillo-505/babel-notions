@@ -10,6 +10,7 @@ import Home from './pages/Home'
 import Libraries from './pages/Libraries'
 import Volumes from './pages/Volumes'
 import Settings from './pages/Settings'
+import LibraryDetails from './pages/LibraryDetails'
 
 function App() {
   return (
@@ -18,6 +19,7 @@ function App() {
         <Routes>
           <Route path="/" element={<Home />} />
           <Route path="/libraries" element={<Libraries />} />
+          <Route path="/libraries/:id" element={<LibraryDetails />} />
           <Route path="/volumes" element={<Volumes />} />
           <Route path="/settings" element={<Settings />} />
         </Routes>
