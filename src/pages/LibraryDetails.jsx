@@ -51,10 +51,15 @@ function LibraryDetails() {
 
         <div className="grid grid-cols-3 gap-4">
           {library.volumes.map((volume) => (
-            <VolumeCard
+            <Link
+              to={`/volumes/${volume.id}`}
               key={volume.id}
-              title={volume.title}
-            />
+              className="block border rounded-xl p-4 hover:bg-gray-100"
+            >
+              <h3 className="font-semibold">
+                {volume.title}
+              </h3>
+            </Link>
           ))}
         </div>
       </section>

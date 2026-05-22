@@ -15,10 +15,10 @@ model Library {
 }
 
 model Volume {
-  id          Int      @id @default(autoincrement())
-  title       String
-  description String?
+  id        Int    @id @default(autoincrement())
+  title     String
+  content   String @default("")
 
-  libraryId   Int
-  library     Library @relation(fields: [libraryId], references: [id])
+  libraryId Int
+  library   Library @relation(fields: [libraryId], references: [id])
 }
