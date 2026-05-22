@@ -75,7 +75,7 @@ function VolumeDetails() {
 
       <button
         onClick={handleSave}
-        className="mt-4 bg-blue-600 text-white px-6 py-3 rounded-xl"
+        className="mt-4 bg-blue-600 text-white px-6 py-3 rounded-xl cursor-pointer"
       >
         Salvar
       </button>
