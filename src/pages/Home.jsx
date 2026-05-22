@@ -2,8 +2,9 @@ import { useEffect, useState } from 'react'
 
 import LibraryCard from '../components/LibraryCard'
 import SearchBar from '../components/SearchBar'
+import CreateLibraryForm from '../components/CreateLibraryForm'
 
-import { getLibraries } from '../services/libraryService'
+import { getLibraries, createLibrary } from '../services/libraryService'
 
 function Home() {
   const [search, setSearch] = useState('')
@@ -35,6 +36,10 @@ function Home() {
         Explore suas coleções de conhecimento.
       </p>
 
+      <CreateLibraryForm
+        onCreate={ handleCreateLibrary }
+      />
+
       <div className="mb-6">
         <SearchBar
           value={search}
@@ -56,6 +61,14 @@ function Home() {
       </div>
     </div>
   )
+
+  async function handleCreateLibrary(library) {
+    await createLibrary(library)
+
+    const updatedLibraries = await getLibraries()
+
+    setLibraries(updatedLibraries)
+  }
 }
 
 export default Home

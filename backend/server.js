@@ -1,43 +1,74 @@
 const express = require('express')
 const cors = require('cors')
 
+const { PrismaClient } = require('@prisma/client')
+
+const { PrismaBetterSqlite3 } = require('@prisma/adapter-better-sqlite3')
+
+const adapter = new PrismaBetterSqlite3({ url: 'file:./dev.db' })
+
+const prisma = new PrismaClient({ adapter})
+
 const app = express()
 
 app.use(cors())
+app.use(express.json())
 
-const libraries = [
-  {
-    id: 1,
-    name: 'Filosofia',
-    description:
-      'Conhecimento filosófico e existencial.',
-  },
+app.get(
+  '/libraries',
+  async (request, response) => {
+    const libraries =
+      await prisma.library.findMany({
+        include: {
+          volumes: true,
+        },
+      })
 
-  {
-    id: 2,
-    name: 'Tecnologia',
-    description:
-      'Programação, IA e computação.',
-  },
+    response.json(libraries)
+  }
+)
 
-  {
-    id: 3,
-    name: 'Ocultismo',
-    description:
-      'Símbolos, rituais e mistérios.',
-  },
-]
+app.get(
+  '/libraries/:id',
+  async (request, response) => {
+    const { id } =
+      request.params
 
-app.get('/libraries', (request, response) => {
-  const { id } = request.params
+    const library =
+      await prisma.library.findUnique({
+        where: {
+          id: Number(id),
+        },
 
-  const library = libraries.find((item) => item.id === Number(id))
-  
-  response.json(libraries)
-})
+        include: {
+          volumes: true,
+        },
+      })
+
+    response.json(library)
+  }
+)
+
+app.post(
+  '/libraries',
+  async (request, response) => {
+    const { name, description } =
+      request.body
+
+    const library =
+      await prisma.library.create({
+        data: {
+          name,
+          description,
+        },
+      })
+
+    response.status(201).json(library)
+  }
+)
 
 app.listen(3000, () => {
   console.log(
-    'Servidor rodando em http://localhost:3000'
+    'Servidor rodando http://localhost:3000'
   )
 })
