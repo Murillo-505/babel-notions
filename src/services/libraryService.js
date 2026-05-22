@@ -45,3 +45,23 @@ export async function deleteLibrary(id) {
     }
   )
 }
+
+export async function updateLibrary(id, library) {
+  const response =
+    await fetch(
+      `${API_URL}/libraries/${id}`,
+      {
+        method: 'PUT',
+
+        headers: {
+          'Content-Type':
+            'application/json',
+        },
+
+        body: JSON.stringify(
+          library
+        ),
+      }
+    )
+  return response.json()
+}

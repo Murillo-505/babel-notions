@@ -5,6 +5,7 @@ function LibraryCard({
   name,
   description,
   onDelete,
+  onEdit,
 }) {
   return (
     <div className="bg-zinc-900 border border-zinc-800 rounded-xl p-4">
@@ -18,12 +19,22 @@ function LibraryCard({
         </p>
       </Link>
 
-      <button
-        onClick={() => onDelete(id)}
-        className="bg-red-600 px-3 py-2 rounded hover:opacity-90 cursor-pointer"
-      >
-        Excluir
-      </button>
+      <div className='flex gap-2'>
+        <button
+          onClick={() => onEdit({id, name, description})}
+          className='bg-yellow-600 px-3 py-2 rounded hover:opacity-90 mr-2 cursor-pointer'
+        >
+          Editar
+        </button>
+
+        <button
+          onClick={() => onDelete(id)}
+          className="bg-red-600 px-3 py-2 rounded hover:opacity-90 cursor-pointer"
+        >
+          Excluir
+        </button>
+      </div>
+
     </div>
   )
 }
