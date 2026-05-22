@@ -1,13 +1,14 @@
+require('dotenv').config()
+
 const express = require('express')
 const cors = require('cors')
 
 const { PrismaClient } = require('@prisma/client')
+const { PrismaPg } = require('@prisma/adapter-pg')
 
-const { PrismaBetterSqlite3 } = require('@prisma/adapter-better-sqlite3')
-
-const adapter = new PrismaBetterSqlite3({ url: 'file:./dev.db' })
-
-const prisma = new PrismaClient({ adapter})
+const connectionString = process.env.DATABASE_URL
+const adapter = new PrismaPg({ connectionString })
+const prisma = new PrismaClient({ adapter })
 
 const app = express()
 
