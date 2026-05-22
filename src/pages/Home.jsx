@@ -4,7 +4,7 @@ import LibraryCard from '../components/LibraryCard'
 import SearchBar from '../components/SearchBar'
 import CreateLibraryForm from '../components/CreateLibraryForm'
 
-import { getLibraries, createLibrary, deleteLibrary } from '../services/libraryService'
+import { getLibraries, createLibrary, deleteLibrary, updateLibrary } from '../services/libraryService'
 
 function Home() {
   const [search, setSearch] = useState('')
@@ -79,6 +79,7 @@ function Home() {
                 name={library.name}
                 description={library.description}
                 onDelete={handleDeleteLibrary}
+                onEdit={handleEditLibrary}
               />
             )
           )}
@@ -89,9 +90,7 @@ function Home() {
 
   async function handleCreateLibrary(library) {
     await createLibrary(library)
-
     const updatedLibraries = await getLibraries()
-
     setLibraries(updatedLibraries)
   }
 
@@ -99,20 +98,34 @@ function Home() {
     const confirmed = window.confirm(
       'Tem certeza que deseja excluir esta biblioteca?'
     )
-
     if (!confirmed) {
       return
     }
-
     await deleteLibrary(id)
-
     const updatedLibraries = await getLibraries()
-
     setLibraries(updatedLibraries)
 
     alert(
       'Biblioteca removida com sucesso!'
     )
+  }
+
+  async function handleEditLibrary(library) {
+    const newName = prompt(
+        'Novo nome:', library.name
+      )
+    if (!newName) return
+    const newDescription = prompt(
+        'Nova descrição:', library.description
+      )
+    await updateLibrary(library.id ,{
+        name: newName,
+        description: newDescription,
+      }
+    )
+
+    const updatedLibraries = await getLibraries()
+    setLibraries(updatedLibraries)
   }
 }
 

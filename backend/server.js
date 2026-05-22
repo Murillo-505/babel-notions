@@ -28,6 +28,15 @@ app.get(
   }
 )
 
+app.get('/', (request, response) => {
+  response.json({
+    message:
+      'Notions of Babel API funcionando',
+
+    status: 'online',
+  })
+})
+
 app.get(
   '/libraries/:id',
   async (request, response) => {
@@ -86,6 +95,31 @@ app.delete(
     })
 
     response.status(204).send()
+  }
+)
+
+app.put(
+  '/libraries/:id',
+  async (request, response) => {
+    const { id } =
+      request.params
+
+    const { name, description } =
+      request.body
+
+    const updatedLibrary =
+      await prisma.library.update({
+        where: {
+          id: Number(id),
+        },
+
+        data: {
+          name,
+          description,
+        },
+      })
+
+    response.json(updatedLibrary)
   }
 )
 
