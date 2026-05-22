@@ -1,3 +1,5 @@
+// @ts-ignore
+import 'dotenv/config'
 import { defineConfig } from 'prisma/config'
 
 export default defineConfig({
@@ -8,6 +10,8 @@ export default defineConfig({
   },
 
   datasource: {
-    url: 'file:./dev.db',
+    url:
+      globalThis.process?.env
+        ?.DATABASE_URL ?? '',
   },
 })

@@ -1,8 +1,12 @@
+require('dotenv').config()
+
 const { PrismaClient } = require('@prisma/client')
 
-const { PrismaBetterSqlite3 } = require('@prisma/adapter-better-sqlite3')
+const { PrismaPg } = require('@prisma/adapter-pg')
 
-const adapter = new PrismaBetterSqlite3({ url: 'file:./dev.db' })
+const connectionString = process.env.DATABASE_URL
+
+const adapter = new PrismaPg({ connectionString })
 
 const prisma = new PrismaClient({ adapter })
 
@@ -13,18 +17,18 @@ async function main() {
   await prisma.library.create({
     data: {
       name: 'Filosofia',
-      description: 'Conhecimento filosófico e existencial.',
+      description:
+        'Conhecimento filosófico e existencial.',
 
       volumes: {
         create: [
           {
-            title: 'Existencialismo',
-            description: 'Pensamento existencial.',
+            title:
+              'Existencialismo',
           },
-
           {
-            title: 'Estoicismo',
-            description: 'Virtude e autocontrole.',
+            title:
+              'Estoicismo',
           },
         ],
       },
@@ -34,25 +38,26 @@ async function main() {
   await prisma.library.create({
     data: {
       name: 'Tecnologia',
-      description: 'Programação, IA e computação.',
+      description:
+        'Programação, IA e computação.',
 
       volumes: {
         create: [
           {
-            title: 'JavaScript',
-            description: 'Lógica e frontend.',
+            title:
+              'JavaScript',
           },
-
           {
             title: 'React',
-            description: 'Componentização.',
           },
         ],
       },
     },
   })
 
-  console.log('Banco populado com sucesso')
+  console.log(
+    'Banco populado com sucesso'
+  )
 }
 
 main()
