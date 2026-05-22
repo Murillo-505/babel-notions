@@ -15,11 +15,13 @@ function VolumeDetails() {
         response.json()
       )
       .then((data) => {
+        console.log(data)
+
+        if (!data) return
+        
         setVolume(data)
         setTitle(data.title)
-        setContent(
-          data.content || ''
-        )
+        setContent(data.content || '')
       })
   }, [id])
 
