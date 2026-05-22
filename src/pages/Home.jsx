@@ -4,16 +4,18 @@ import LibraryCard from '../components/LibraryCard'
 import SearchBar from '../components/SearchBar'
 import CreateLibraryForm from '../components/CreateLibraryForm'
 
-import { getLibraries, createLibrary } from '../services/libraryService'
+import { getLibraries, createLibrary, deleteLibrary } from '../services/libraryService'
 
 function Home() {
   const [search, setSearch] = useState('')
   const [libraries, setLibraries] = useState([])
+  const [loading, setLoading] = useState(true)
 
   useEffect(() => {
     async function loadLibraries() {
       const data = await getLibraries()
       setLibraries(data)
+      setLoading(false)
     }
 
     loadLibraries()
@@ -26,6 +28,14 @@ function Home() {
         .includes(search.toLowerCase())
   )
 
+  if (loading) {
+    return (
+      <h1 className="text-xl">
+        Carregando bibliotecas...
+      </h1>
+    )
+  }
+
   return (
     <div>
       <h1 className="text-4xl font-bold mb-2">
@@ -37,7 +47,7 @@ function Home() {
       </p>
 
       <CreateLibraryForm
-        onCreate={ handleCreateLibrary }
+        onCreate={handleCreateLibrary}
       />
 
       <div className="mb-6">
@@ -49,16 +59,31 @@ function Home() {
         />
       </div>
 
-      <div className="grid grid-cols-3 gap-4">
-        {filteredLibraries.map((library) => (
-          <LibraryCard
-            key={library.id}
-            id={library.id}
-            name={library.name}
-            description={library.description}
-          />
-        ))}
-      </div>
+      {filteredLibraries.length === 0 ? (
+        <div className="bg-zinc-900 p-6 rounded-xl border border-zinc-800">
+          <h2 className="text-xl font-bold mb-2">
+            Nenhuma biblioteca encontrada
+          </h2>
+
+          <p className="text-zinc-400">
+            Tente outra pesquisa ou crie uma nova biblioteca.
+          </p>
+        </div>
+      ) : (
+        <div className="grid grid-cols-3 gap-4">
+          {filteredLibraries.map(
+            (library) => (
+              <LibraryCard
+                key={library.id}
+                id={library.id}
+                name={library.name}
+                description={library.description}
+                onDelete={handleDeleteLibrary}
+              />
+            )
+          )}
+        </div>
+      )}
     </div>
   )
 
@@ -68,6 +93,26 @@ function Home() {
     const updatedLibraries = await getLibraries()
 
     setLibraries(updatedLibraries)
+  }
+
+  async function handleDeleteLibrary(id) {
+    const confirmed = window.confirm(
+      'Tem certeza que deseja excluir esta biblioteca?'
+    )
+
+    if (!confirmed) {
+      return
+    }
+
+    await deleteLibrary(id)
+
+    const updatedLibraries = await getLibraries()
+
+    setLibraries(updatedLibraries)
+
+    alert(
+      'Biblioteca removida com sucesso!'
+    )
   }
 }
 

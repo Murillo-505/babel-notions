@@ -67,6 +67,28 @@ app.post(
   }
 )
 
+app.delete(
+  '/libraries/:id',
+  async (request, response) => {
+    const { id } =
+      request.params
+
+    await prisma.volume.deleteMany({
+      where: {
+        libraryId: Number(id),
+      },
+    })
+
+    await prisma.library.delete({
+      where: {
+        id: Number(id),
+      },
+    })
+
+    response.status(204).send()
+  }
+)
+
 app.listen(3000, () => {
   console.log(
     'Servidor rodando http://localhost:3000'

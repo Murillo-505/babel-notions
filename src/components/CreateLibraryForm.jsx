@@ -8,6 +8,13 @@ function CreateLibraryForm({ onCreate }) {
   function handleSubmit(event) {
     event.preventDefault()
 
+    if (!name.trim()) {
+      alert(
+        'Digite um nome para a biblioteca.'
+      )
+      return
+    }
+
     onCreate({
       name,
       description,
@@ -49,7 +56,7 @@ function CreateLibraryForm({ onCreate }) {
 
       <button
         type="submit"
-        className="bg-blue-600 px-4 py-2 rounded hover:opacity-90"
+        className="bg-blue-600 px-4 py-2 rounded hover:opacity-90 cursor-pointer"
       >
         Criar Biblioteca
       </button>

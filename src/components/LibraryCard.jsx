@@ -1,18 +1,30 @@
 import { Link } from 'react-router-dom'
 
-function LibraryCard({ id, name, description }) {
+function LibraryCard({
+  id,
+  name,
+  description,
+  onDelete,
+}) {
   return (
-    <Link to={`/libraries/${id}`}>
-      <div className="bg-zinc-900 border border-zinc-800 rounded-x1 p-4 hover:bg-zinc-800 transition cursor-pointer">
+    <div className="bg-zinc-900 border border-zinc-800 rounded-xl p-4">
+      <Link to={`/libraries/${id}`}>
         <h2 className="text-xl font-bold mb-2">
           {name}
         </h2>
-        
-        <p className="text-zinc-400">
+
+        <p className="text-zinc-400 mb-4">
           {description}
         </p>
-      </div>
-    </Link>
+      </Link>
+
+      <button
+        onClick={() => onDelete(id)}
+        className="bg-red-600 px-3 py-2 rounded hover:opacity-90 cursor-pointer"
+      >
+        Excluir
+      </button>
+    </div>
   )
 }
 

@@ -36,3 +36,12 @@ export async function createLibrary(library) {
 
   return response.json()
 }
+
+export async function deleteLibrary(id) {
+  await fetch(
+    `${API_URL}/libraries/${id}`,
+    {
+      method: 'DELETE',
+    }
+  )
+}
