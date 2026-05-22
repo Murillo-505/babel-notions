@@ -59,6 +59,23 @@ app.get(
   }
 )
 
+app.get(
+  '/volumes/:id',
+  async (request, response) => {
+    const { id } =
+      request.params
+
+    const volume =
+      await prisma.volume.findUnique({
+        where: {
+          id: Number(id),
+        },
+      })
+
+    response.json(volume)
+  }
+)
+
 app.post(
   '/libraries',
   async (request, response) => {
@@ -121,6 +138,35 @@ app.put(
       })
 
     response.json(updatedLibrary)
+  }
+)
+
+app.put(
+  '/volumes/:id',
+  async (request, response) => {
+    const { id } =
+      request.params
+
+    const {
+      title,
+      content,
+    } = request.body
+
+    const updatedVolume =
+      await prisma.volume.update({
+        where: {
+          id: Number(id),
+        },
+
+        data: {
+          title,
+          content,
+        },
+      })
+
+    response.json(
+      updatedVolume
+    )
   }
 )
 
