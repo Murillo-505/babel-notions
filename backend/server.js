@@ -79,7 +79,7 @@ app.get(
 app.post(
   '/libraries',
   async (request, response) => {
-    const { name, description } =
+    const { name, description, wallId } =
       request.body
 
     const library =
@@ -87,6 +87,7 @@ app.post(
         data: {
           name,
           description,
+          wallId,
         },
       })
 
