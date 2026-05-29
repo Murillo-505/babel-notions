@@ -12,6 +12,7 @@ import Volumes from './pages/Volumes'
 import Settings from './pages/Settings'
 import LibraryDetails from './pages/LibraryDetails'
 import VolumeDetails from './pages/VolumeDetails'
+import WallDetails from './pages/WallDetails'
 
 function App() {
   return (
@@ -24,6 +25,7 @@ function App() {
           <Route path="/volumes" element={<Volumes />} />
           <Route path="/volumes/:id" element={<VolumeDetails />} />
           <Route path="/settings" element={<Settings />} />
+          <Route path="/walls/:id" element={<WallDetails />} />
         </Routes>
       </MainLayout>
     </BrowserRouter>

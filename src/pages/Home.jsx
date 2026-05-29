@@ -1,37 +1,46 @@
 import { useEffect, useState } from 'react'
+import { Link } from 'react-router-dom'
 
-import LibraryCard from '../components/LibraryCard'
 import SearchBar from '../components/SearchBar'
-import CreateLibraryForm from '../components/CreateLibraryForm'
 
-import { getLibraries, createLibrary, deleteLibrary, updateLibrary } from '../services/libraryService'
+import { getWalls } from '../services/wallService'
 
 function Home() {
   const [search, setSearch] = useState('')
-  const [libraries, setLibraries] = useState([])
+
+  const [walls, setWalls] = useState([])
   const [loading, setLoading] = useState(true)
 
   useEffect(() => {
-    async function loadLibraries() {
-      const data = await getLibraries()
-      setLibraries(data)
+    async function loadWalls() {
+      const data = await getWalls()
+
+      setWalls(data)
       setLoading(false)
     }
 
-    loadLibraries()
+    loadWalls()
   }, [])
 
-  const filteredLibraries = libraries.filter(
-    (library) =>
-      library.name
-        .toLowerCase()
-        .includes(search.toLowerCase())
-  )
+  const filteredWalls =
+    walls.map((wall) => ({
+      ...wall,
+
+      libraries:
+        wall.libraries.filter(
+          (library) =>
+            library.name
+              .toLowerCase()
+              .includes(
+                search.toLowerCase()
+              )
+        ),
+    }))
 
   if (loading) {
     return (
       <h1 className="text-xl">
-        Carregando bibliotecas...
+        Carregando paredes...
       </h1>
     )
   }
@@ -39,18 +48,14 @@ function Home() {
   return (
     <div>
       <h1 className="text-4xl font-bold mb-2">
-        Biblioteca
+        Babel Notions
       </h1>
 
       <p className="text-zinc-400 mb-6">
-        Explore suas coleções de conhecimento.
+        Organize seu conhecimento em paredes, bibliotecas e volumes.
       </p>
 
-      <CreateLibraryForm
-        onCreate={handleCreateLibrary}
-      />
-
-      <div className="mb-6">
+      <div className="mb-8">
         <SearchBar
           value={search}
           onChange={(event) =>
@@ -59,74 +64,57 @@ function Home() {
         />
       </div>
 
-      {filteredLibraries.length === 0 ? (
-        <div className="bg-zinc-900 p-6 rounded-xl border border-zinc-800">
-          <h2 className="text-xl font-bold mb-2">
-            Nenhuma biblioteca encontrada
-          </h2>
+      <div className="space-y-8">
+        {filteredWalls.map((wall) => (
+          <section
+            key={wall.id}
+            className="bg-zinc-900 border border-zinc-800 rounded-2xl p-6"
+          >
+            <Link
+              to={`/walls/${wall.id}`}
+              className="block mb-4 hover:opacity-90 transition"
+            >
+              <h2 className="text-2xl font-bold hover:text-zinc-300">
+                {wall.name}
+              </h2>
 
-          <p className="text-zinc-400">
-            Tente outra pesquisa ou crie uma nova biblioteca.
-          </p>
-        </div>
-      ) : (
-        <div className="grid grid-cols-3 gap-4">
-          {filteredLibraries.map(
-            (library) => (
-              <LibraryCard
-                key={library.id}
-                id={library.id}
-                name={library.name}
-                description={library.description}
-                onDelete={handleDeleteLibrary}
-                onEdit={handleEditLibrary}
-              />
-            )
-          )}
-        </div>
-      )}
+              <p className="text-zinc-400">
+                {wall.description}
+              </p>
+            </Link>
+
+            {wall.libraries.length === 0 ? (
+              <p className="text-zinc-500">
+                Nenhuma biblioteca encontrada.
+              </p>
+            ) : (
+              <div className="grid grid-cols-3 gap-4">
+                {wall.libraries.map((library) => (
+                  <Link
+                    key={library.id}
+                    to={`/libraries/${library.id}`}
+                    className="bg-zinc-800 hover:bg-zinc-700 transition rounded-xl p-4 border border-zinc-700"
+                  >
+                    <h3 className="font-semibold text-lg">
+                      {library.name}
+                    </h3>
+
+                    <p className="text-zinc-400 text-sm mt-1">
+                      {library.description}
+                    </p>
+
+                    <p className="text-xs text-zinc-500 mt-3">
+                      {library.volumes.length}{' '}volumes
+                    </p>
+                  </Link>
+                ))}
+              </div>
+            )}
+          </section>
+        ))}
+      </div>
     </div>
   )
-
-  async function handleCreateLibrary(library) {
-    await createLibrary(library)
-    const updatedLibraries = await getLibraries()
-    setLibraries(updatedLibraries)
-  }
-
-  async function handleDeleteLibrary(id) {
-    const confirmed = window.confirm(
-      'Tem certeza que deseja excluir esta biblioteca?'
-    )
-    if (!confirmed) {
-      return
-    }
-    await deleteLibrary(id)
-    const updatedLibraries = await getLibraries()
-    setLibraries(updatedLibraries)
-
-    alert(
-      'Biblioteca removida com sucesso!'
-    )
-  }
-
-  async function handleEditLibrary(library) {
-    const newName = prompt(
-        'Novo nome:', library.name
-      )
-    if (!newName) return
-    const newDescription = prompt(
-        'Nova descrição:', library.description
-      )
-    await updateLibrary(library.id ,{
-        name: newName,
-        description: newDescription,
-      }
-    )
-
-    const updatedLibraries = await getLibraries()
-    setLibraries(updatedLibraries)
-  }
 }
 
 export default Home
