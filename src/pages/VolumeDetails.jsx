@@ -9,7 +9,7 @@ function VolumeDetails() {
 
   useEffect(() => {
     fetch(
-      `http://babel-notions-api.onrender.com/volumes/${id}`
+      `https://babel-notions-api.onrender.com/volumes/${id}`
     )
       .then((response) =>
         response.json()
@@ -27,7 +27,7 @@ function VolumeDetails() {
 
   async function handleSave() {
     await fetch(
-      `http://babel-notions-api.onrender.com/volumes/${id}`,
+      `https://babel-notions-api.onrender.com/volumes/${id}`,
       {
         method: 'PUT',
 
