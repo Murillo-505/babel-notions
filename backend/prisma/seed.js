@@ -1,62 +1,94 @@
 require('dotenv').config()
 
 const { PrismaClient } = require('@prisma/client')
-
 const { PrismaPg } = require('@prisma/adapter-pg')
-
 const connectionString = process.env.DATABASE_URL
-
 const adapter = new PrismaPg({ connectionString })
-
 const prisma = new PrismaClient({ adapter })
 
 async function main() {
   await prisma.volume.deleteMany()
   await prisma.library.deleteMany()
+  await prisma.wall.deleteMany()
 
-  await prisma.library.create({
+  await prisma.wall.create({
     data: {
-      name: 'Filosofia',
-      description:
-        'Conhecimento filosófico e existencial.',
+      name: 'Faculdade',
 
-      volumes: {
+      description:
+        'Conteúdos acadêmicos e estudos.',
+
+      libraries: {
         create: [
           {
-            title:
-              'Existencialismo',
+            name:
+              'Computação',
+
+            description:
+              'Conteúdo de programação e tecnologia.',
+
+            volumes: {
+              create: [
+                {
+                  title:
+                    'React',
+                  content:
+                    'Componentes, props e estados.',
+                },
+
+                {
+                  title:
+                    'Banco de Dados',
+                  content:
+                    'SQL, PostgreSQL e modelagem.',
+                },
+              ],
+            },
           },
+
           {
-            title:
-              'Estoicismo',
+            name:
+              'Filosofia',
+
+            description:
+              'Estudos filosóficos.',
+
+            volumes: {
+              create: [
+                {
+                  title:
+                    'Estoicismo',
+                  content:
+                    'Sêneca, Marco Aurélio e Epicteto.',
+                },
+              ],
+            },
           },
         ],
       },
     },
   })
 
-  await prisma.library.create({
+  await prisma.wall.create({
     data: {
-      name: 'Tecnologia',
-      description:
-        'Programação, IA e computação.',
+      name: 'Pessoal',
 
-      volumes: {
-        create: [
-          {
-            title:
-              'JavaScript',
-          },
-          {
-            title: 'React',
-          },
-        ],
-      },
+      description:
+        'Interesses e desenvolvimento pessoal.',
+    },
+  })
+
+  await prisma.wall.create({
+    data: {
+      name: 'Projetos',
+
+      description:
+        'Projetos pessoais e ideias.',
     },
   })
 
   console.log(
-    'Banco populado com sucesso'
+    'Banco populado com walls'
   )
 }
 
