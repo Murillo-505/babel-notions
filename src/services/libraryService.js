@@ -1,3 +1,4 @@
+// const API_URL = 'http://localhost:3000'
 const API_URL = 'https://babel-notions-api.onrender.com'
 
 export async function getLibraries() {
