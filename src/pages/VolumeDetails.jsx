@@ -1,9 +1,6 @@
-import {
-  useEffect,
-  useState,
-} from 'react'
+import { useEffect, useState } from 'react'
 
-import { useParams } from 'react-router-dom'
+import { useParams, Link } from 'react-router-dom'
 
 function VolumeDetails() {
   const { id } = useParams()
@@ -88,6 +85,12 @@ function VolumeDetails() {
 
   return (
     <div className="max-w-4xl mx-auto p-8">
+      <Link 
+        to={`/libraries/${volume.libraryId}`}
+        className="inline-block text-zinc-400 hover:text-white transition mb-6 cursor-pointer"
+      >
+      </Link>
+      
       <div className="flex justify-between items-center mb-6">
         <input
           type="text"
