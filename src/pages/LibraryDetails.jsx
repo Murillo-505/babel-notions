@@ -1,8 +1,15 @@
 import { useEffect, useState } from 'react'
 import { useParams, Link } from 'react-router-dom'
 
-import VolumeCard from '../components/VolumeCard'
-import { getLibraryById } from '../services/libraryService'
+import {
+  getLibraryById,
+} from '../services/libraryService'
+
+import {
+  createVolume,
+  deleteVolume,
+  updateVolume,
+} from '../services/volumeService'
 
 function LibraryDetails() {
   const { id } = useParams()
@@ -10,25 +17,90 @@ function LibraryDetails() {
   const [library, setLibrary] =
     useState(null)
 
+  const [title, setTitle] =
+    useState('')
+
   useEffect(() => {
-    async function loadLibrary() {
-      const data =
-        await getLibraryById(id)
-
-      setLibrary(data)
-    }
-
     loadLibrary()
   }, [id])
 
+  async function loadLibrary() {
+    const data =
+      await getLibraryById(id)
+
+    setLibrary(data)
+  }
+
+  async function handleCreateVolume(
+    event
+  ) {
+    event.preventDefault()
+
+    if (!title.trim()) return
+
+    await createVolume({
+      title,
+      libraryId: Number(id),
+      content: '',
+    })
+
+    setTitle('')
+
+    await loadLibrary()
+  }
+
+  async function handleDeleteVolume(
+    volumeId
+  ) {
+    const confirmed =
+      window.confirm(
+        'Deseja excluir este volume?'
+      )
+
+    if (!confirmed) return
+
+    await deleteVolume(
+      volumeId
+    )
+
+    await loadLibrary()
+  }
+
+  async function handleEditVolume(
+    volume
+  ) {
+    const newTitle =
+      prompt(
+        'Novo nome do volume:',
+        volume.title
+      )
+
+    if (!newTitle) return
+
+    await updateVolume(
+      volume.id,
+      {
+        title: newTitle,
+        content:
+          volume.content,
+      }
+    )
+
+    await loadLibrary()
+  }
+
   if (!library) {
-    return <h1>Carregando...</h1>
+    return (
+      <h1>
+        Carregando...
+      </h1>
+    )
   }
 
   return (
     <div>
       <Link
-        to="/"
+        to={`/walls/${library.wallId}`}
         className="text-zinc-400 hover:text-white transition"
       >
         ← Voltar
@@ -44,24 +116,94 @@ function LibraryDetails() {
         </p>
       </div>
 
+      <div className="bg-zinc-900 border border-zinc-800 rounded-2xl p-6 mb-8">
+        <h2 className="text-xl font-bold mb-4">
+          Novo Volume
+        </h2>
+
+        <form
+          onSubmit={
+            handleCreateVolume
+          }
+          className="flex gap-4"
+        >
+          <input
+            type="text"
+            placeholder="Nome do volume"
+            value={title}
+            onChange={(event) =>
+              setTitle(
+                event.target.value
+              )
+            }
+            className="flex-1 bg-zinc-800 border border-zinc-700 rounded-lg px-4 py-3"
+          />
+
+          <button
+            type="submit"
+            className="bg-white text-black px-5 rounded-lg font-medium hover:opacity-90 transition cursor-pointer"
+          >
+            Criar
+          </button>
+        </form>
+      </div>
+
       <section>
         <h2 className="text-2xl font-bold mb-4">
           Volumes
         </h2>
 
-        <div className="grid grid-cols-3 gap-4">
-          {library.volumes.map((volume) => (
-            <Link
-              to={`/volumes/${volume.id}`}
-              key={volume.id}
-              className="block border rounded-xl p-4 hover:bg-gray-100"
-            >
-              <h3 className="font-semibold">
-                {volume.title}
-              </h3>
-            </Link>
-          ))}
-        </div>
+        {library.volumes.length ===
+          0 ? (
+          <p className="text-zinc-500">
+            Nenhum volume criado.
+          </p>
+        ) : (
+          <div className="grid grid-cols-3 gap-4">
+            {library.volumes.map(
+              (volume) => (
+                <div
+                  key={volume.id}
+                  className="bg-zinc-900 border border-zinc-800 rounded-xl p-4"
+                >
+                  <Link
+                    to={`/volumes/${volume.id}`}
+                  >
+                    <h3 className="font-semibold text-lg hover:text-zinc-300">
+                      {
+                        volume.title
+                      }
+                    </h3>
+                  </Link>
+
+                  <div className="flex gap-2 mt-4">
+                    <button
+                      onClick={() =>
+                        handleEditVolume(
+                          volume
+                        )
+                      }
+                      className="text-sm bg-zinc-800 px-3 py-1 rounded hover:bg-zinc-700"
+                    >
+                      Editar
+                    </button>
+
+                    <button
+                      onClick={() =>
+                        handleDeleteVolume(
+                          volume.id
+                        )
+                      }
+                      className="text-sm bg-red-900 px-3 py-1 rounded hover:opacity-90"
+                    >
+                      Excluir
+                    </button>
+                  </div>
+                </div>
+              )
+            )}
+          </div>
+        )}
       </section>
     </div>
   )

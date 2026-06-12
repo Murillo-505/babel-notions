@@ -280,7 +280,77 @@ app.delete(
       .send()
   }
 )
+app.post(
+  '/volumes',
+  async (request, response) => {
+    const {
+      title,
+      content,
+      libraryId,
+    } = request.body
 
+    const volume =
+      await prisma.volume.create({
+        data: {
+          title,
+          content:
+            content ?? '',
+          libraryId,
+        },
+      })
+
+    response
+      .status(201)
+      .json(volume)
+  }
+)
+
+app.put(
+  '/volumes/:id',
+  async (request, response) => {
+    const { id } =
+      request.params
+
+    const {
+      title,
+      content,
+    } = request.body
+
+    const updatedVolume =
+      await prisma.volume.update({
+        where: {
+          id: Number(id),
+        },
+
+        data: {
+          title,
+          content,
+        },
+      })
+
+    response.json(
+      updatedVolume
+    )
+  }
+)
+
+app.delete(
+  '/volumes/:id',
+  async (request, response) => {
+    const { id } =
+      request.params
+
+    await prisma.volume.delete({
+      where: {
+        id: Number(id),
+      },
+    })
+
+    response
+      .status(204)
+      .send()
+  }
+)
 app.listen(3000, () => {
   console.log(
     'Servidor rodando http://localhost:3000'
