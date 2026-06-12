@@ -174,6 +174,14 @@ function LibraryDetails() {
                         volume.title
                       }
                     </h3>
+                    <p className="text-zinc-400 text-sm mt-2 line-clamp-3">
+                      {volume.content
+                        ? volume.content.slice(
+                          0,
+                          100
+                        ) + '...'
+                        : 'Volume vazio'}
+                    </p>
                   </Link>
 
                   <div className="flex gap-2 mt-4">

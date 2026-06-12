@@ -1,11 +1,24 @@
-import { useEffect, useState } from 'react'
+import {
+  useEffect,
+  useState,
+} from 'react'
+
 import { useParams } from 'react-router-dom'
 
 function VolumeDetails() {
   const { id } = useParams()
-  const [volume, setVolume] = useState(null)
-  const [title, setTitle] = useState('')
-  const [content, setContent] = useState('')
+
+  const [volume, setVolume] =
+    useState(null)
+
+  const [title, setTitle] =
+    useState('')
+
+  const [content, setContent] =
+    useState('')
+
+  const [saveStatus, setSaveStatus] =
+    useState('Salvo')
 
   useEffect(() => {
     fetch(
@@ -15,17 +28,33 @@ function VolumeDetails() {
         response.json()
       )
       .then((data) => {
-        console.log(data)
-
         if (!data) return
-        
+
         setVolume(data)
         setTitle(data.title)
-        setContent(data.content || '')
+        setContent(
+          data.content || ''
+        )
       })
   }, [id])
 
-  async function handleSave() {
+  useEffect(() => {
+    if (!volume) return
+
+    setSaveStatus(
+      'Salvando...'
+    )
+
+    const timeout =
+      setTimeout(() => {
+        handleAutoSave()
+      }, 1000)
+
+    return () =>
+      clearTimeout(timeout)
+  }, [title, content])
+
+  async function handleAutoSave() {
     await fetch(
       `https://babel-notions-api.onrender.com/volumes/${id}`,
       {
@@ -36,31 +65,45 @@ function VolumeDetails() {
             'application/json',
         },
 
-        body: JSON.stringify({
-          title,
-          content,
-        }),
+        body:
+          JSON.stringify({
+            title,
+            content,
+          }),
       }
     )
-    alert('Nota salva')
-  }
-  if (!volume) {
-    return (
-      <p>Carregando...</p>
+
+    setSaveStatus(
+      '✓ Salvo'
     )
   }
+
+  if (!volume) {
+    return (
+      <p>
+        Carregando...
+      </p>
+    )
+  }
+
   return (
     <div className="max-w-4xl mx-auto p-8">
-      <input
-        type="text"
-        value={title}
-        onChange={(event) =>
-          setTitle(
-            event.target.value
-          )
-        }
-        className="w-full text-3xl font-bold border-none outline-none mb-6"
-      />
+      <div className="flex justify-between items-center mb-6">
+        <input
+          type="text"
+          value={title}
+          onChange={(event) =>
+            setTitle(
+              event.target.value
+            )
+          }
+          className="w-full text-3xl font-bold border-none outline-none bg-transparent"
+        />
+
+        <span className="text-sm text-zinc-400 ml-4 whitespace-nowrap">
+          {saveStatus}
+        </span>
+      </div>
 
       <textarea
         value={content}
@@ -70,15 +113,8 @@ function VolumeDetails() {
           )
         }
         placeholder="Escreva sua nota..."
-        className="w-full min-h-[500px] p-4 border rounded-xl resize-none outline-none"
+        className="w-full min-h-[500px] p-4 border border-zinc-800 rounded-xl resize-none outline-none bg-zinc-900"
       />
-
-      <button
-        onClick={handleSave}
-        className="mt-4 bg-blue-600 text-white px-6 py-3 rounded-xl cursor-pointer"
-      >
-        Salvar
-      </button>
     </div>
   )
 }
