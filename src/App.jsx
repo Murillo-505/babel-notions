@@ -1,18 +1,14 @@
-import {
-  BrowserRouter,
-  Routes,
-  Route,
-} from 'react-router-dom'
+import { BrowserRouter, Routes, Route } from "react-router-dom";
 
-import MainLayout from './layouts/MainLayout'
+import MainLayout from "./layouts/MainLayout";
 
-import Home from './pages/Home'
-import Libraries from './pages/Libraries'
-import Volumes from './pages/Volumes'
-import Settings from './pages/Settings'
-import LibraryDetails from './pages/LibraryDetails'
-import VolumeDetails from './pages/VolumeDetails'
-import WallDetails from './pages/WallDetails'
+import Home from "./pages/Home";
+import Libraries from "./pages/Libraries";
+import Volumes from "./pages/Volumes";
+import Settings from "./pages/Settings";
+import LibraryDetails from "./pages/LibraryDetails";
+import VolumeDetails from "./pages/VolumeDetails";
+import WallDetails from "./pages/WallDetails";
 
 function App() {
   return (
@@ -29,7 +25,7 @@ function App() {
         </Routes>
       </MainLayout>
     </BrowserRouter>
-  )
+  );
 }
 
-export default App
+export default App;
