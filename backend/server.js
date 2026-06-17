@@ -42,6 +42,8 @@ app.get("/libraries/:id", async (request, response) => {
     },
 
     include: {
+      wall: true,
+
       volumes: true,
     },
   });
