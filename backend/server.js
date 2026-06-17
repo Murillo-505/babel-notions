@@ -15,6 +15,16 @@ const app = express();
 app.use(cors());
 app.use(express.json());
 
+app.get("/", (request, response) => {
+  response.json({
+    message: "Notions of Babel API funcionando",
+
+    status: "online",
+  });
+});
+
+// LIBRARIES
+
 app.get("/libraries", async (request, response) => {
   const libraries = await prisma.library.findMany({
     include: {
@@ -23,14 +33,6 @@ app.get("/libraries", async (request, response) => {
   });
 
   response.json(libraries);
-});
-
-app.get("/", (request, response) => {
-  response.json({
-    message: "Notions of Babel API funcionando",
-
-    status: "online",
-  });
 });
 
 app.get("/libraries/:id", async (request, response) => {
@@ -51,26 +53,6 @@ app.get("/libraries/:id", async (request, response) => {
   response.json(library);
 });
 
-app.get("/volumes/:id", async (request, response) => {
-  const { id } = request.params;
-
-  const volume = await prisma.volume.findUnique({
-    where: {
-      id: Number(id),
-    },
-
-    include: {
-      library: {
-        include: {
-          wall: true,
-        },
-      },
-    },
-  });
-
-  response.json(volume);
-});
-
 app.post("/libraries", async (request, response) => {
   const { name, description, wallId } = request.body;
 
@@ -83,24 +65,6 @@ app.post("/libraries", async (request, response) => {
   });
 
   response.status(201).json(library);
-});
-
-app.delete("/libraries/:id", async (request, response) => {
-  const { id } = request.params;
-
-  await prisma.volume.deleteMany({
-    where: {
-      libraryId: Number(id),
-    },
-  });
-
-  await prisma.library.delete({
-    where: {
-      id: Number(id),
-    },
-  });
-
-  response.status(204).send();
 });
 
 app.put("/libraries/:id", async (request, response) => {
@@ -122,6 +86,60 @@ app.put("/libraries/:id", async (request, response) => {
   response.json(updatedLibrary);
 });
 
+app.delete("/libraries/:id", async (request, response) => {
+  const { id } = request.params;
+
+  await prisma.volume.deleteMany({
+    where: {
+      libraryId: Number(id),
+    },
+  });
+
+  await prisma.library.delete({
+    where: {
+      id: Number(id),
+    },
+  });
+
+  response.status(204).send();
+});
+
+// VOLUMES
+
+app.get("/volumes/:id", async (request, response) => {
+  const { id } = request.params;
+
+  const volume = await prisma.volume.findUnique({
+    where: {
+      id: Number(id),
+    },
+
+    include: {
+      library: {
+        include: {
+          wall: true,
+        },
+      },
+    },
+  });
+
+  response.json(volume);
+});
+
+app.post("/volumes", async (request, response) => {
+  const { title, content, libraryId } = request.body;
+
+  const volume = await prisma.volume.create({
+    data: {
+      title,
+      content: content ?? "",
+      libraryId,
+    },
+  });
+
+  response.status(201).json(volume);
+});
+
 app.put("/volumes/:id", async (request, response) => {
   const { id } = request.params;
 
@@ -140,6 +158,20 @@ app.put("/volumes/:id", async (request, response) => {
 
   response.json(updatedVolume);
 });
+
+app.delete("/volumes/:id", async (request, response) => {
+  const { id } = request.params;
+
+  await prisma.volume.delete({
+    where: {
+      id: Number(id),
+    },
+  });
+
+  response.status(204).send();
+});
+
+// WALLS
 
 app.get("/walls", async (request, response) => {
   const walls = await prisma.wall.findMany({
@@ -218,50 +250,7 @@ app.delete("/walls/:id", async (request, response) => {
 
   response.status(204).send();
 });
-app.post("/volumes", async (request, response) => {
-  const { title, content, libraryId } = request.body;
 
-  const volume = await prisma.volume.create({
-    data: {
-      title,
-      content: content ?? "",
-      libraryId,
-    },
-  });
-
-  response.status(201).json(volume);
-});
-
-app.put("/volumes/:id", async (request, response) => {
-  const { id } = request.params;
-
-  const { title, content } = request.body;
-
-  const updatedVolume = await prisma.volume.update({
-    where: {
-      id: Number(id),
-    },
-
-    data: {
-      title,
-      content,
-    },
-  });
-
-  response.json(updatedVolume);
-});
-
-app.delete("/volumes/:id", async (request, response) => {
-  const { id } = request.params;
-
-  await prisma.volume.delete({
-    where: {
-      id: Number(id),
-    },
-  });
-
-  response.status(204).send();
-});
 app.listen(3000, () => {
   console.log("Servidor rodando http://localhost:3000");
 });

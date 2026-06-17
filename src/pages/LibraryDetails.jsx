@@ -146,14 +146,14 @@ function LibraryDetails() {
                 <div className="flex gap-2 mt-4">
                   <button
                     onClick={() => handleEditVolume(volume)}
-                    className="text-sm bg-zinc-800 px-3 py-1 rounded hover:bg-zinc-700"
+                    className="text-sm bg-zinc-800 px-3 py-1 rounded hover:bg-zinc-700 cursor-pointer"
                   >
                     Editar
                   </button>
 
                   <button
                     onClick={() => handleDeleteVolume(volume.id)}
-                    className="text-sm bg-red-900 px-3 py-1 rounded hover:opacity-90"
+                    className="text-sm bg-red-900 px-3 py-1 rounded hover:opacity-90 cursor-pointer"
                   >
                     Excluir
                   </button>

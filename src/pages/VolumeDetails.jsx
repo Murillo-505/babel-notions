@@ -16,7 +16,7 @@ function VolumeDetails() {
   const [saveStatus, setSaveStatus] = useState("Salvo");
 
   useEffect(() => {
-    fetch(`https://babel-notions-api.onrender.com/volumes/${id}`)
+    fetch(`${import.meta.env.VITE_API_URL}/volumes/${id}`)
       .then((response) => response.json())
       .then((data) => {
         if (!data) return;
@@ -24,6 +24,7 @@ function VolumeDetails() {
         setVolume(data);
         setTitle(data.title);
         setContent(data.content || "");
+        saveRecentVolume(data);
       });
   }, [id]);
 
@@ -40,7 +41,7 @@ function VolumeDetails() {
   }, [title, content]);
 
   async function handleAutoSave() {
-    await fetch(`https://babel-notions-api.onrender.com/volumes/${id}`, {
+    await fetch(`${import.meta.env.VITE_API_URL}/volumes/${id}`, {
       method: "PUT",
 
       headers: {
