@@ -104,6 +104,42 @@ function Home() {
             )
       )
 
+  const totalWalls =
+    walls.length
+
+  const totalLibraries =
+    walls.reduce(
+      (
+        total,
+        wall
+      ) =>
+        total +
+        wall.libraries
+          .length,
+      0
+    )
+
+  const totalVolumes =
+    walls.reduce(
+      (
+        total,
+        wall
+      ) =>
+        total +
+        wall.libraries.reduce(
+          (
+            libraryTotal,
+            library
+          ) =>
+            libraryTotal +
+            library
+              .volumes
+              .length,
+          0
+        ),
+      0
+    )
+
   async function handleCreateWall() {
     const name =
       prompt(
@@ -201,6 +237,40 @@ function Home() {
         bibliotecas
         e volumes.
       </p>
+
+      <div className="grid grid-cols-3 gap-4 mb-8">
+        <div className="bg-zinc-900 border border-zinc-800 rounded-2xl p-6 text-center">
+          <h2 className="text-4xl font-bold">
+            {totalWalls}
+          </h2>
+
+          <p className="text-zinc-400 mt-2">
+            Paredes
+          </p>
+        </div>
+
+        <div className="bg-zinc-900 border border-zinc-800 rounded-2xl p-6 text-center">
+          <h2 className="text-4xl font-bold">
+            {
+              totalLibraries
+            }
+          </h2>
+
+          <p className="text-zinc-400 mt-2">
+            Bibliotecas
+          </p>
+        </div>
+
+        <div className="bg-zinc-900 border border-zinc-800 rounded-2xl p-6 text-center">
+          <h2 className="text-4xl font-bold">
+            {totalVolumes}
+          </h2>
+
+          <p className="text-zinc-400 mt-2">
+            Volumes
+          </p>
+        </div>
+      </div>
 
       <button
         onClick={
