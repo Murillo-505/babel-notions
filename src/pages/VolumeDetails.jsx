@@ -15,6 +15,25 @@ function VolumeDetails() {
 
   const [saveStatus, setSaveStatus] = useState("Salvo");
 
+  function saveRecentVolume(volume) {
+    const recentVolumes =
+      JSON.parse(localStorage.getItem("recentVolumes")) || [];
+
+    const filtered = recentVolumes.filter((item) => item.id !== volume.id);
+
+    const updated = [
+      {
+        id: volume.id,
+        title: volume.title,
+        libraryId: volume.libraryId,
+      },
+
+      ...filtered,
+    ].slice(0, 5);
+
+    localStorage.setItem("recentVolumes", JSON.stringify(updated));
+  }
+
   useEffect(() => {
     fetch(`${import.meta.env.VITE_API_URL}/volumes/${id}`)
       .then((response) => response.json())
