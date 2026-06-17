@@ -8,12 +8,10 @@ function VolumeDetails() {
   const { id } = useParams();
 
   const [volume, setVolume] = useState(null);
-
   const [title, setTitle] = useState("");
-
   const [content, setContent] = useState("");
-
   const [saveStatus, setSaveStatus] = useState("Salvo");
+  const [isFavorite, setIsFavorite] = useState(false);
 
   function saveRecentVolume(volume) {
     const recentVolumes =
@@ -44,6 +42,7 @@ function VolumeDetails() {
         setTitle(data.title);
         setContent(data.content || "");
         saveRecentVolume(data);
+        setIsFavorite(checkFavorite(data.id));
       });
   }, [id]);
 
@@ -76,6 +75,40 @@ function VolumeDetails() {
     setSaveStatus("✓ Salvo");
   }
 
+  function checkFavorite(volumeId) {
+    const favorites = JSON.parse(localStorage.getItem("favoriteVolumes")) || [];
+
+    return favorites.some((item) => item.id === volumeId);
+  }
+
+  function toggleFavorite() {
+    const favorites = JSON.parse(localStorage.getItem("favoriteVolumes")) || [];
+
+    if (isFavorite) {
+      const updated = favorites.filter((item) => item.id !== volume.id);
+
+      localStorage.setItem("favoriteVolumes", JSON.stringify(updated));
+
+      setIsFavorite(false);
+
+      return;
+    }
+
+    const updated = [
+      {
+        id: volume.id,
+        title: title,
+        libraryId: volume.libraryId,
+      },
+
+      ...favorites,
+    ];
+
+    localStorage.setItem("favoriteVolumes", JSON.stringify(updated));
+
+    setIsFavorite(true);
+  }
+
   if (!volume) {
     return <p>Carregando...</p>;
   }
@@ -102,13 +135,20 @@ function VolumeDetails() {
     <div className="max-w-4xl mx-auto p-8">
       <Breadcrumb items={breadcrumbItems} />
 
-      <div className="flex justify-between items-center mb-6">
+      <div className="flex justify-between items-center gap-4 mb-6">
         <input
           type="text"
           value={title}
           onChange={(event) => setTitle(event.target.value)}
           className="w-full text-3xl font-bold border-none outline-none bg-transparent"
         />
+
+        <button
+          onClick={toggleFavorite}
+          className="text-3xl hover:scale-110 transition cursor-pointer"
+        >
+          {isFavorite ? "★" : "☆"}
+        </button>
 
         <span className="text-sm text-zinc-400 ml-4 whitespace-nowrap">
           {saveStatus}

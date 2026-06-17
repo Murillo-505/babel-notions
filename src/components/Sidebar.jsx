@@ -6,8 +6,8 @@ import { getWalls } from "../services/wallService";
 
 function Sidebar() {
   const [walls, setWalls] = useState([]);
-
   const [recentVolumes, setRecentVolumes] = useState([]);
+  const [favoriteVolumes, setFavoriteVolumes] = useState([]);
 
   const location = useLocation();
 
@@ -17,12 +17,13 @@ function Sidebar() {
 
       setWalls(data);
     }
-
     loadWalls();
 
     const recent = JSON.parse(localStorage.getItem("recentVolumes")) || [];
-
     setRecentVolumes(recent);
+
+    const favorites = JSON.parse(localStorage.getItem("favoriteVolumes")) || [];
+    setFavoriteVolumes(favorites);
   }, [location.pathname]);
 
   return (
@@ -95,6 +96,39 @@ function Sidebar() {
                     <p className="font-medium truncate">{volume.title}</p>
 
                     <p className="text-xs text-zinc-500">Volume recente</p>
+                  </Link>
+                );
+              })}
+            </div>
+          )}
+        </div>
+
+        <div>
+          <h2 className="text-xs uppercase text-zinc-500 mb-3 tracking-widest">
+            Favoritos
+          </h2>
+
+          {favoriteVolumes.length === 0 ? (
+            <p className="text-zinc-500 text-sm">Nenhum favorito</p>
+          ) : (
+            <div className="space-y-2">
+              {favoriteVolumes.map((volume) => {
+                const isActive = location.pathname === `/volumes/${volume.id}`;
+
+                return (
+                  <Link
+                    key={volume.id}
+                    to={`/volumes/${volume.id}`}
+                    className={`
+                block rounded-xl px-4 py-3 transition cursor-pointer
+                ${
+                  isActive
+                    ? "bg-zinc-700 text-white"
+                    : "hover:bg-zinc-800 text-zinc-300"
+                }
+              `}
+                  >
+                    <p className="font-medium truncate">★ {volume.title}</p>
                   </Link>
                 );
               })}
