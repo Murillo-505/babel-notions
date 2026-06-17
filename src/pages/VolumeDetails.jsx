@@ -1,105 +1,92 @@
-import { useEffect, useState } from 'react'
+import { useEffect, useState } from "react";
 
-import { useParams, Link } from 'react-router-dom'
+import { useParams } from "react-router-dom";
+
+import Breadcrumb from "../components/Breadcrumb";
 
 function VolumeDetails() {
-  const { id } = useParams()
+  const { id } = useParams();
 
-  const [volume, setVolume] =
-    useState(null)
+  const [volume, setVolume] = useState(null);
 
-  const [title, setTitle] =
-    useState('')
+  const [title, setTitle] = useState("");
 
-  const [content, setContent] =
-    useState('')
+  const [content, setContent] = useState("");
 
-  const [saveStatus, setSaveStatus] =
-    useState('Salvo')
+  const [saveStatus, setSaveStatus] = useState("Salvo");
 
   useEffect(() => {
-    fetch(
-      `https://babel-notions-api.onrender.com/volumes/${id}`
-    )
-      .then((response) =>
-        response.json()
-      )
+    fetch(`https://babel-notions-api.onrender.com/volumes/${id}`)
+      .then((response) => response.json())
       .then((data) => {
-        if (!data) return
+        if (!data) return;
 
-        setVolume(data)
-        setTitle(data.title)
-        setContent(
-          data.content || ''
-        )
-      })
-  }, [id])
+        setVolume(data);
+        setTitle(data.title);
+        setContent(data.content || "");
+      });
+  }, [id]);
 
   useEffect(() => {
-    if (!volume) return
+    if (!volume) return;
 
-    setSaveStatus(
-      'Salvando...'
-    )
+    setSaveStatus("Salvando...");
 
-    const timeout =
-      setTimeout(() => {
-        handleAutoSave()
-      }, 1000)
+    const timeout = setTimeout(() => {
+      handleAutoSave();
+    }, 1000);
 
-    return () =>
-      clearTimeout(timeout)
-  }, [title, content])
+    return () => clearTimeout(timeout);
+  }, [title, content]);
 
   async function handleAutoSave() {
-    await fetch(
-      `https://babel-notions-api.onrender.com/volumes/${id}`,
-      {
-        method: 'PUT',
+    await fetch(`https://babel-notions-api.onrender.com/volumes/${id}`, {
+      method: "PUT",
 
-        headers: {
-          'Content-Type':
-            'application/json',
-        },
+      headers: {
+        "Content-Type": "application/json",
+      },
 
-        body:
-          JSON.stringify({
-            title,
-            content,
-          }),
-      }
-    )
+      body: JSON.stringify({
+        title,
+        content,
+      }),
+    });
 
-    setSaveStatus(
-      '✓ Salvo'
-    )
+    setSaveStatus("✓ Salvo");
   }
 
   if (!volume) {
-    return (
-      <p>
-        Carregando...
-      </p>
-    )
+    return <p>Carregando...</p>;
   }
+
+  const breadcrumbItems = [
+    {
+      label: "Home",
+      path: "/",
+    },
+    {
+      label: volume.library?.wall?.name,
+      path: `/walls/${volume.library?.wallId}`,
+    },
+    {
+      label: volume.library?.name,
+      path: `/libraries/${volume.libraryId}`,
+    },
+    {
+      label: title,
+    },
+  ];
 
   return (
     <div className="max-w-4xl mx-auto p-8">
-      <Link 
-        to={`/libraries/${volume.libraryId}`}
-        className="inline-block text-zinc-400 hover:text-white transition mb-6 cursor-pointer"
-      >
-      </Link>
-      
+      <Breadcrumb items={breadcrumbItems} />
+
       <div className="flex justify-between items-center mb-6">
         <input
           type="text"
           value={title}
-          onChange={(event) =>
-            setTitle(
-              event.target.value
-            )
-          }
+          onChange={(event) => setTitle(event.target.value)}
           className="w-full text-3xl font-bold border-none outline-none bg-transparent"
         />
 
@@ -110,16 +97,12 @@ function VolumeDetails() {
 
       <textarea
         value={content}
-        onChange={(event) =>
-          setContent(
-            event.target.value
-          )
-        }
+        onChange={(event) => setContent(event.target.value)}
         placeholder="Escreva sua nota..."
         className="w-full min-h-[500px] p-4 border border-zinc-800 rounded-xl resize-none outline-none bg-zinc-900"
       />
     </div>
-  )
+  );
 }
 
-export default VolumeDetails
+export default VolumeDetails;
