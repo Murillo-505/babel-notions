@@ -1,5 +1,4 @@
 import { useEffect, useState } from "react";
-
 import { useParams } from "react-router-dom";
 
 import Breadcrumb from "../components/Breadcrumb";
@@ -41,7 +40,9 @@ function VolumeDetails() {
         setVolume(data);
         setTitle(data.title);
         setContent(data.content || "");
+
         saveRecentVolume(data);
+
         setIsFavorite(checkFavorite(data.id));
       });
   }, [id]);
@@ -97,7 +98,7 @@ function VolumeDetails() {
     const updated = [
       {
         id: volume.id,
-        title: title,
+        title,
         libraryId: volume.libraryId,
       },
 
@@ -109,6 +110,28 @@ function VolumeDetails() {
     setIsFavorite(true);
   }
 
+  function handleExport() {
+    const text = `${title}
+
+${content}`;
+
+    const blob = new Blob([text], {
+      type: "text/plain",
+    });
+
+    const url = URL.createObjectURL(blob);
+
+    const link = document.createElement("a");
+
+    link.href = url;
+
+    link.download = `${title}.txt`;
+
+    link.click();
+
+    URL.revokeObjectURL(url);
+  }
+
   if (!volume) {
     return <p>Carregando...</p>;
   }
@@ -118,14 +141,19 @@ function VolumeDetails() {
       label: "Home",
       path: "/",
     },
+
     {
       label: volume.library?.wall?.name,
+
       path: `/walls/${volume.library?.wallId}`,
     },
+
     {
       label: volume.library?.name,
+
       path: `/libraries/${volume.libraryId}`,
     },
+
     {
       label: title,
     },
@@ -150,7 +178,14 @@ function VolumeDetails() {
           {isFavorite ? "★" : "☆"}
         </button>
 
-        <span className="text-sm text-zinc-400 ml-4 whitespace-nowrap">
+        <button
+          onClick={handleExport}
+          className="bg-zinc-800 hover:bg-zinc-700 px-3 py-2 rounded-lg text-sm transition cursor-pointer"
+        >
+          Exportar
+        </button>
+
+        <span className="text-sm text-zinc-400 ml-2 whitespace-nowrap">
           {saveStatus}
         </span>
       </div>

@@ -80,6 +80,25 @@ function Home() {
     0,
   );
 
+  const searchResults =
+    search.length < 2
+      ? []
+      : walls.flatMap((wall) =>
+          wall.libraries.flatMap((library) =>
+            library.volumes
+              .filter(
+                (volume) =>
+                  volume.title.toLowerCase().includes(search.toLowerCase()) ||
+                  volume.content?.toLowerCase().includes(search.toLowerCase()),
+              )
+              .map((volume) => ({
+                volume,
+                library,
+                wall,
+              })),
+          ),
+        );
+
   async function handleCreateWall() {
     const name = prompt("Nome da parede:");
 
@@ -143,22 +162,22 @@ function Home() {
       </p>
 
       <div className="grid grid-cols-3 gap-4 mb-8">
-        <div className="bg-zinc-900 border border-zinc-800 rounded-2xl p-6 text-center">
-          <h2 className="text-4xl font-bold">{totalWalls}</h2>
+        <div className="bg-zinc-900 border border-zinc-800 rounded-2xl p-5">
+          <p className="text-zinc-500 text-sm">Paredes</p>
 
-          <p className="text-zinc-400 mt-2">Paredes</p>
+          <h2 className="text-3xl font-bold">{totalWalls}</h2>
         </div>
 
-        <div className="bg-zinc-900 border border-zinc-800 rounded-2xl p-6 text-center">
-          <h2 className="text-4xl font-bold">{totalLibraries}</h2>
+        <div className="bg-zinc-900 border border-zinc-800 rounded-2xl p-5">
+          <p className="text-zinc-500 text-sm">Bibliotecas</p>
 
-          <p className="text-zinc-400 mt-2">Bibliotecas</p>
+          <h2 className="text-3xl font-bold">{totalLibraries}</h2>
         </div>
 
-        <div className="bg-zinc-900 border border-zinc-800 rounded-2xl p-6 text-center">
-          <h2 className="text-4xl font-bold">{totalVolumes}</h2>
+        <div className="bg-zinc-900 border border-zinc-800 rounded-2xl p-5">
+          <p className="text-zinc-500 text-sm">Volumes</p>
 
-          <p className="text-zinc-400 mt-2">Volumes</p>
+          <h2 className="text-3xl font-bold">{totalVolumes}</h2>
         </div>
       </div>
 
@@ -175,6 +194,38 @@ function Home() {
           onChange={(event) => setSearch(event.target.value)}
         />
       </div>
+
+      {searchResults.length > 0 && (
+        <div className="bg-zinc-900 border border-zinc-800 rounded-2xl p-4 mb-8">
+          <h2 className="font-bold text-lg mb-4">Resultados da Busca</h2>
+
+          <div className="space-y-2">
+            {searchResults.slice(0, 5).map((result, index) => (
+              <Link
+                key={index}
+                to={`/volumes/${result.volume.id}`}
+                className="block p-4 rounded-xl hover:bg-zinc-800 transition border border-transparent hover:border-zinc-700"
+              >
+                <p className="font-semibold text-lg">
+                  📖 {result.volume.title}
+                </p>
+
+                <p className="text-zinc-400 text-sm mt-2">
+                  {result.volume.content
+                    ? result.volume.content.slice(0, 120) + "..."
+                    : "Volume sem conteúdo"}
+                </p>
+
+                <p className="text-xs text-zinc-500 mt-3">
+                  📚 {result.library.name}
+                  {" • "}
+                  🧱 {result.wall.name}
+                </p>
+              </Link>
+            ))}
+          </div>
+        </div>
+      )}
 
       <div className="space-y-8">
         {filteredWalls.map((wall) => (
