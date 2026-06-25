@@ -4,7 +4,13 @@ const API_URL = import.meta.env.VITE_API_URL;
 export async function getWalls() {
   const response = await fetch(`${API_URL}/walls`);
 
-  const data = await response.json();
+  const text = await response.text();
+
+  console.log(text);
+
+  const data = JSON.parse(text);
+
+  return data;
 
   return data;
 }
@@ -12,7 +18,13 @@ export async function getWalls() {
 export async function getWallById(id) {
   const response = await fetch(`${API_URL}/walls/${id}`);
 
-  const data = await response.json();
+  const text = await response.text();
+
+  console.log(text);
+
+  const data = JSON.parse(text);
+
+  return data;
 
   return data;
 }
@@ -28,7 +40,13 @@ export async function createWall(wall) {
     body: JSON.stringify(wall),
   });
 
-  const data = await response.json();
+  const text = await response.text();
+
+  console.log(text);
+
+  const data = JSON.parse(text);
+
+  return data;
 
   return data;
 }
@@ -44,7 +62,13 @@ export async function updateWall(id, wall) {
     body: JSON.stringify(wall),
   });
 
-  const data = await response.json();
+  const text = await response.text();
+
+  console.log(text);
+
+  const data = JSON.parse(text);
+
+  return data;
 
   return data;
 }
