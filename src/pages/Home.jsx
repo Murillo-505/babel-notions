@@ -22,6 +22,11 @@ function Home() {
     async function loadWalls() {
       const data = await getWalls();
 
+      console.log(data);
+
+      setWalls(data);
+      setLoading(false);
+
       setWalls(data);
       setLoading(false);
     }
