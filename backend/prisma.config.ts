@@ -10,6 +10,6 @@ export default defineConfig({
   },
 
   datasource: {
-    url: globalThis.process?.env?.DATABASE_URL ?? "",
+    url: "file:../dev.db",
   },
 });
