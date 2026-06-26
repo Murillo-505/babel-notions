@@ -1,45 +1,41 @@
 -- CreateTable
 CREATE TABLE "Shelf" (
-    "id" INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT,
+    "id" SERIAL NOT NULL,
     "name" TEXT NOT NULL,
     "description" TEXT NOT NULL,
-    "createdAt" DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
-    "updatedAt" DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    "createdAt" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    "updatedAt" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
     "libraryId" INTEGER NOT NULL,
-    CONSTRAINT "Shelf_libraryId_fkey" FOREIGN KEY ("libraryId") REFERENCES "Library" ("id") ON DELETE RESTRICT ON UPDATE CASCADE
+
+    CONSTRAINT "Shelf_pkey" PRIMARY KEY ("id")
 );
 
+-- CreateIndex
 CREATE INDEX "Shelf_libraryId_idx" ON "Shelf"("libraryId");
 
+-- AddForeignKey
+ALTER TABLE "Shelf" ADD CONSTRAINT "Shelf_libraryId_fkey" FOREIGN KEY ("libraryId") REFERENCES "Library"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
+
+-- Create default shelf per library that already has volumes
 INSERT INTO "Shelf" ("name", "description", "libraryId", "updatedAt")
 SELECT 'Geral', 'Prateleira padrão', "libraryId", CURRENT_TIMESTAMP
 FROM "Volume"
 GROUP BY "libraryId";
 
-PRAGMA defer_foreign_keys=ON;
-PRAGMA foreign_keys=OFF;
+-- Add shelfId, migrate data, remove libraryId
+ALTER TABLE "Volume" ADD COLUMN "shelfId" INTEGER;
 
-CREATE TABLE "new_Volume" (
-    "id" INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT,
-    "title" TEXT NOT NULL,
-    "content" TEXT NOT NULL DEFAULT '',
-    "shelfId" INTEGER NOT NULL,
-    CONSTRAINT "Volume_shelfId_fkey" FOREIGN KEY ("shelfId") REFERENCES "Shelf" ("id") ON DELETE RESTRICT ON UPDATE CASCADE
-);
+UPDATE "Volume" AS v
+SET "shelfId" = s."id"
+FROM "Shelf" AS s
+WHERE s."libraryId" = v."libraryId";
 
-INSERT INTO "new_Volume" ("id", "title", "content", "shelfId")
-SELECT
-    v."id",
-    v."title",
-    v."content",
-    s."id"
-FROM "Volume" v
-INNER JOIN "Shelf" s ON s."libraryId" = v."libraryId";
+ALTER TABLE "Volume" ALTER COLUMN "shelfId" SET NOT NULL;
 
-DROP TABLE "Volume";
-ALTER TABLE "new_Volume" RENAME TO "Volume";
+ALTER TABLE "Volume" DROP CONSTRAINT "Volume_libraryId_fkey";
+ALTER TABLE "Volume" DROP COLUMN "libraryId";
 
+ALTER TABLE "Volume" ADD CONSTRAINT "Volume_shelfId_fkey" FOREIGN KEY ("shelfId") REFERENCES "Shelf"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
+
+-- CreateIndex
 CREATE INDEX "Volume_shelfId_idx" ON "Volume"("shelfId");
-
-PRAGMA foreign_keys=ON;
-PRAGMA defer_foreign_keys=OFF;

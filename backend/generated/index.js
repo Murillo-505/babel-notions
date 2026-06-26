@@ -87,6 +87,9 @@ Prisma.NullTypes = NullTypes
  * Enums
  */
 exports.Prisma.TransactionIsolationLevel = makeStrictEnum({
+  ReadUncommitted: 'ReadUncommitted',
+  ReadCommitted: 'ReadCommitted',
+  RepeatableRead: 'RepeatableRead',
   Serializable: 'Serializable'
 });
 
@@ -124,6 +127,11 @@ exports.Prisma.SortOrder = {
   desc: 'desc'
 };
 
+exports.Prisma.QueryMode = {
+  default: 'default',
+  insensitive: 'insensitive'
+};
+
 exports.Prisma.NullsOrder = {
   first: 'first',
   last: 'last'
@@ -143,8 +151,8 @@ const config = {
   "previewFeatures": [],
   "clientVersion": "7.8.0",
   "engineVersion": "3c6e192761c0362d496ed980de936e2f3cebcd3a",
-  "activeProvider": "sqlite",
-  "inlineSchema": "generator client {\n  provider = \"prisma-client-js\"\n  output   = \"../generated\"\n}\n\ndatasource db {\n  provider = \"sqlite\"\n}\n\nmodel Wall {\n  id          Int    @id @default(autoincrement())\n  name        String\n  description String\n\n  libraries Library[]\n}\n\nmodel Library {\n  id          Int    @id @default(autoincrement())\n  name        String\n  description String\n\n  wallId Int?\n  wall   Wall? @relation(fields: [wallId], references: [id])\n\n  shelves Shelf[]\n}\n\nmodel Shelf {\n  id          Int      @id @default(autoincrement())\n  name        String\n  description String\n  createdAt   DateTime @default(now())\n  updatedAt   DateTime @updatedAt\n\n  libraryId Int\n  library   Library @relation(fields: [libraryId], references: [id])\n\n  volumes Volume[]\n\n  @@index([libraryId])\n}\n\nmodel Volume {\n  id      Int    @id @default(autoincrement())\n  title   String\n  content String @default(\"\")\n\n  shelfId Int\n  shelf   Shelf @relation(fields: [shelfId], references: [id])\n\n  @@index([shelfId])\n}\n"
+  "activeProvider": "postgresql",
+  "inlineSchema": "generator client {\n  provider = \"prisma-client-js\"\n  output   = \"../generated\"\n}\n\ndatasource db {\n  provider = \"postgresql\"\n}\n\nmodel Wall {\n  id          Int    @id @default(autoincrement())\n  name        String\n  description String\n\n  libraries Library[]\n}\n\nmodel Library {\n  id          Int    @id @default(autoincrement())\n  name        String\n  description String\n\n  wallId Int?\n  wall   Wall? @relation(fields: [wallId], references: [id])\n\n  shelves Shelf[]\n}\n\nmodel Shelf {\n  id          Int      @id @default(autoincrement())\n  name        String\n  description String\n  createdAt   DateTime @default(now())\n  updatedAt   DateTime @updatedAt\n\n  libraryId Int\n  library   Library @relation(fields: [libraryId], references: [id])\n\n  volumes Volume[]\n\n  @@index([libraryId])\n}\n\nmodel Volume {\n  id      Int    @id @default(autoincrement())\n  title   String\n  content String @default(\"\")\n\n  shelfId Int\n  shelf   Shelf @relation(fields: [shelfId], references: [id])\n\n  @@index([shelfId])\n}\n"
 }
 
 config.runtimeDataModel = JSON.parse("{\"models\":{\"Wall\":{\"fields\":[{\"name\":\"id\",\"kind\":\"scalar\",\"type\":\"Int\"},{\"name\":\"name\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"description\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"libraries\",\"kind\":\"object\",\"type\":\"Library\",\"relationName\":\"LibraryToWall\"}],\"dbName\":null},\"Library\":{\"fields\":[{\"name\":\"id\",\"kind\":\"scalar\",\"type\":\"Int\"},{\"name\":\"name\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"description\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"wallId\",\"kind\":\"scalar\",\"type\":\"Int\"},{\"name\":\"wall\",\"kind\":\"object\",\"type\":\"Wall\",\"relationName\":\"LibraryToWall\"},{\"name\":\"shelves\",\"kind\":\"object\",\"type\":\"Shelf\",\"relationName\":\"LibraryToShelf\"}],\"dbName\":null},\"Shelf\":{\"fields\":[{\"name\":\"id\",\"kind\":\"scalar\",\"type\":\"Int\"},{\"name\":\"name\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"description\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"createdAt\",\"kind\":\"scalar\",\"type\":\"DateTime\"},{\"name\":\"updatedAt\",\"kind\":\"scalar\",\"type\":\"DateTime\"},{\"name\":\"libraryId\",\"kind\":\"scalar\",\"type\":\"Int\"},{\"name\":\"library\",\"kind\":\"object\",\"type\":\"Library\",\"relationName\":\"LibraryToShelf\"},{\"name\":\"volumes\",\"kind\":\"object\",\"type\":\"Volume\",\"relationName\":\"ShelfToVolume\"}],\"dbName\":null},\"Volume\":{\"fields\":[{\"name\":\"id\",\"kind\":\"scalar\",\"type\":\"Int\"},{\"name\":\"title\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"content\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"shelfId\",\"kind\":\"scalar\",\"type\":\"Int\"},{\"name\":\"shelf\",\"kind\":\"object\",\"type\":\"Shelf\",\"relationName\":\"ShelfToVolume\"}],\"dbName\":null}},\"enums\":{},\"types\":{}}")
