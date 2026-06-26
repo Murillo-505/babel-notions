@@ -23,7 +23,22 @@ model Library {
   wallId      Int?
   wall        Wall? @relation(fields: [wallId], references: [id])
 
+  shelves     Shelf[]
+}
+
+model Shelf {
+  id          Int      @id @default(autoincrement())
+  name        String
+  description String
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  libraryId   Int
+  library     Library  @relation(fields: [libraryId], references: [id])
+
   volumes     Volume[]
+
+  @@index([libraryId])
 }
 
 model Volume {
@@ -31,6 +46,8 @@ model Volume {
   title       String
   content     String   @default("")
 
-  libraryId   Int
-  library     Library  @relation(fields: [libraryId], references: [id])
+  shelfId     Int
+  shelf       Shelf    @relation(fields: [shelfId], references: [id])
+
+  @@index([shelfId])
 }

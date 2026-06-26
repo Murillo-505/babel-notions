@@ -8,9 +8,13 @@ async function getVolume(request, response) {
       id: Number(id),
     },
     include: {
-      library: {
+      shelf: {
         include: {
-          wall: true,
+          library: {
+            include: {
+              wall: true,
+            },
+          },
         },
       },
     },
@@ -20,13 +24,13 @@ async function getVolume(request, response) {
 }
 
 async function createVolume(request, response) {
-  const { title, content, libraryId } = request.body;
+  const { title, content, shelfId } = request.body;
 
   const volume = await prisma.volume.create({
     data: {
       title,
       content: content ?? "",
-      libraryId,
+      shelfId,
     },
   });
 

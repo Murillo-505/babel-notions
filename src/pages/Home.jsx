@@ -3,6 +3,9 @@ import { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 
 import LoadingSkeleton from "../components/LoadingSkeleton";
+import EntityActionsMenu from "../components/EntityActionsMenu";
+import CreateEntityForm from "../components/CreateEntityForm";
+import BookshelfPreview from "../components/library/BookshelfPreview";
 
 import { useSearch } from "../context/SearchContext";
 
@@ -18,7 +21,7 @@ function Home() {
 
   const [walls, setWalls] = useState([]);
   const [loading, setLoading] = useState(true);
-  const [openInput, setOpenInput] = useState(false);
+  const [showCreateForm, setShowCreateForm] = useState(false);
   const [newWallName, setNewWallName] = useState("");
   const [newWallDescription, setNewWallDescription] = useState("");
   const [editingId, setEditingId] = useState(null);
@@ -50,8 +53,10 @@ function Home() {
           ?.toLowerCase()
           .includes(searchTerm);
 
-        const matchVolume = library.volumes?.some((volume) =>
-          volume.title.toLowerCase().includes(searchTerm),
+        const matchVolume = library.shelves?.some((shelf) =>
+          shelf.volumes?.some((volume) =>
+            volume.title.toLowerCase().includes(searchTerm),
+          ),
         );
 
         return matchLibraryName || matchDescription || matchVolume;
@@ -66,22 +71,38 @@ function Home() {
     })
     .filter(
       (wall) =>
-        wall.libraries.length > 0 ||
+        wall.libraries?.length > 0 ||
         wall.name.toLowerCase().includes(search.toLowerCase()),
     );
 
-  const totalWalls = walls.length;
+  const totalWalls = walls?.length;
 
-  const totalLibraries = walls.reduce(
-    (total, wall) => total + wall.libraries.length,
+  const totalLibraries = walls?.reduce(
+    (total, wall) => total + wall.libraries?.length,
     0,
   );
 
-  const totalVolumes = walls.reduce(
+  const totalShelves = walls?.reduce(
     (total, wall) =>
       total +
-      wall.libraries.reduce(
-        (libraryTotal, library) => libraryTotal + library.volumes.length,
+      wall.libraries?.reduce(
+        (libraryTotal, library) =>
+          libraryTotal + (library.shelves?.length ?? 0),
+        0,
+      ),
+    0,
+  );
+
+  const totalVolumes = walls?.reduce(
+    (total, wall) =>
+      total +
+      wall.libraries?.reduce(
+        (libraryTotal, library) =>
+          libraryTotal +
+          (library.shelves?.reduce(
+            (shelfTotal, shelf) => shelfTotal + (shelf.volumes?.length ?? 0),
+            0,
+          ) ?? 0),
         0,
       ),
     0,
@@ -90,19 +111,25 @@ function Home() {
   const searchResults =
     search.length < 2
       ? []
-      : walls.flatMap((wall) =>
-          wall.libraries.flatMap((library) =>
-            library.volumes
-              .filter(
-                (volume) =>
-                  volume.title.toLowerCase().includes(search.toLowerCase()) ||
-                  volume.content?.toLowerCase().includes(search.toLowerCase()),
-              )
-              .map((volume) => ({
-                volume,
-                library,
-                wall,
-              })),
+      : walls?.flatMap((wall) =>
+          wall.libraries?.flatMap((library) =>
+            library.shelves?.flatMap((shelf) =>
+              shelf.volumes
+                ?.filter(
+                  (volume) =>
+                    volume.title
+                      .toLowerCase()
+                      .includes(search.toLowerCase()) ||
+                    volume.content
+                      ?.toLowerCase()
+                      .includes(search.toLowerCase()),
+                )
+                ?.map((volume) => ({
+                  volume,
+                  library,
+                  wall,
+                })),
+            ),
           ),
         );
 
@@ -114,7 +141,7 @@ function Home() {
       description: newWallDescription.trim() || "",
     });
 
-    setOpenInput(false);
+    setShowCreateForm(false);
     setNewWallName("");
     setNewWallDescription("");
 
@@ -166,20 +193,25 @@ function Home() {
   }
 
   return (
-    <div>
+    <div className="min-w-0 max-w-full">
       <p className="text-zinc-400 mb-6">
-        Organize seu conhecimento em paredes, bibliotecas e volumes.
+        Organize seu conhecimento em paredes, estantes, prateleiras e volumes.
       </p>
 
-      <div className="grid grid-cols-3 gap-4 mb-8">
+      <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-8">
         <div className="card p-5">
           <p className="text-zinc-500 text-sm">Paredes</p>
           <h2 className="text-3xl font-bold">{totalWalls}</h2>
         </div>
 
         <div className="card p-5">
-          <p className="text-zinc-500 text-sm">Bibliotecas</p>
+          <p className="text-zinc-500 text-sm">Estantes</p>
           <h2 className="text-3xl font-bold">{totalLibraries}</h2>
+        </div>
+
+        <div className="card p-5">
+          <p className="text-zinc-500 text-sm">Prateleiras</p>
+          <h2 className="text-3xl font-bold">{totalShelves}</h2>
         </div>
 
         <div className="card p-5">
@@ -188,43 +220,37 @@ function Home() {
         </div>
       </div>
 
-      <button
-        onClick={() => setOpenInput(!openInput)}
-        className="btn-primary mb-6"
+      <CreateEntityForm
+        entityName="Parede"
+        isOpen={showCreateForm}
+        onToggle={() => setShowCreateForm(!showCreateForm)}
+        onSubmit={(event) => {
+          event.preventDefault();
+          handleCreateWall();
+        }}
       >
-        {`+ ${openInput ? "Cancelar" : "Nova Parede"}`}
-      </button>
+        <input
+          type="text"
+          placeholder="Nome da parede"
+          value={newWallName}
+          onChange={(event) => setNewWallName(event.target.value)}
+          className="input-sm"
+        />
 
-      {openInput && (
-        <div className="mb-8 space-y-4 w-96">
-          <input
-            type="text"
-            placeholder="Nome da parede"
-            value={newWallName}
-            onChange={(event) => setNewWallName(event.target.value)}
-            className="input"
-          />
+        <textarea
+          placeholder="Descrição"
+          value={newWallDescription}
+          onChange={(event) => setNewWallDescription(event.target.value)}
+          className="input-sm"
+        />
+      </CreateEntityForm>
 
-          <input
-            type="text"
-            placeholder="Descrição da parede"
-            value={newWallDescription}
-            onChange={(event) => setNewWallDescription(event.target.value)}
-            className="input"
-          />
-
-          <button onClick={handleCreateWall} className="btn-primary">
-            Criar Parede
-          </button>
-        </div>
-      )}
-
-      {searchResults.length > 0 && (
+      {searchResults?.length > 0 && (
         <div className="card p-4 mb-8">
           <h2 className="font-bold text-lg mb-4">Resultados da Busca</h2>
 
           <div className="space-y-2">
-            {searchResults.slice(0, 5).map((result) => (
+            {searchResults?.slice(0, 5).map((result) => (
               <Link
                 key={result.volume.id}
                 to={`/volumes/${result.volume.id}`}
@@ -251,7 +277,7 @@ function Home() {
 
       <div className="space-y-8">
         {filteredWalls.map((wall) => (
-          <section key={wall.id} className="card">
+          <section key={wall.id} className="card min-w-0 overflow-hidden">
             {editingId === wall.id ? (
               <div className="mb-4 space-y-3">
                 <input
@@ -284,10 +310,10 @@ function Home() {
                 </div>
               </div>
             ) : (
-              <>
+              <div className="flex items-start justify-between gap-4 mb-4">
                 <Link
                   to={`/walls/${wall.id}`}
-                  className="block mb-4 hover:opacity-90 transition-opacity duration-200"
+                  className="block min-w-0 flex-1 hover:opacity-90 transition-opacity duration-200"
                 >
                   <h2 className="text-2xl font-bold hover:text-zinc-300">
                     {wall.name}
@@ -296,70 +322,39 @@ function Home() {
                   <p className="text-zinc-400">{wall.description}</p>
                 </Link>
 
-                <div className="flex gap-2 mb-4 items-center flex-wrap">
-                  <button
-                    onClick={() => startEditWall(wall)}
-                    className="btn-secondary"
-                  >
-                    Editar
-                  </button>
-
-                  {deletingId === wall.id ? (
-                    <>
-                      <span className="text-sm text-zinc-400">
-                        Tem certeza?
-                      </span>
-
-                      <button
-                        onClick={() => confirmDeleteWall(wall.id)}
-                        className="btn-danger"
-                      >
-                        Sim, excluir
-                      </button>
-
-                      <button
-                        onClick={() => setDeletingId(null)}
-                        className="btn-secondary"
-                      >
-                        Cancelar
-                      </button>
-                    </>
-                  ) : (
-                    <button
-                      onClick={() => {
-                        setDeletingId(wall.id);
-                        cancelEditWall();
-                      }}
-                      className="btn-danger"
-                    >
-                      Excluir
-                    </button>
-                  )}
-                </div>
-              </>
+                <EntityActionsMenu
+                  ariaLabel="Ações da parede"
+                  isDeleting={deletingId === wall.id}
+                  onStartEdit={() => startEditWall(wall)}
+                  onStartDelete={() => {
+                    setDeletingId(wall.id);
+                    cancelEditWall();
+                  }}
+                  onCancelDelete={() => setDeletingId(null)}
+                  onConfirmDelete={() => confirmDeleteWall(wall.id)}
+                />
+              </div>
             )}
 
-            {wall.libraries.length === 0 ? (
-              <p className="text-zinc-500">Nenhuma biblioteca encontrada.</p>
+            {wall.libraries?.length === 0 ? (
+              <p className="text-zinc-500">Nenhuma estante encontrada.</p>
             ) : (
-              <div className="grid grid-cols-3 gap-4">
-                {wall.libraries.map((library) => (
-                  <Link
-                    key={library.id}
-                    to={`/libraries/${library.id}`}
-                    className="bg-zinc-800 hover:bg-zinc-700 transition-colors duration-200 rounded-xl p-4 border border-zinc-700 cursor-pointer"
-                  >
-                    <h3 className="font-semibold text-lg">{library.name}</h3>
+              <div className="min-w-0 max-w-full overflow-hidden">
+                <div className="flex gap-4 overflow-x-auto overscroll-x-contain pb-2 snap-x snap-mandatory">
+                  {wall.libraries?.map((library) => (
+                    <Link
+                      key={library.id}
+                      to={`/estantes/${library.id}`}
+                      className="library-bookshelf shrink-0 w-72 snap-start p-3 cursor-pointer"
+                    >
+                      <h3 className="mb-3 truncate px-1 font-semibold text-lg">
+                        {library.name}
+                      </h3>
 
-                    <p className="text-zinc-400 text-sm mt-1">
-                      {library.description}
-                    </p>
-
-                    <p className="text-xs text-zinc-500 mt-3">
-                      {library.volumes.length} volumes
-                    </p>
-                  </Link>
-                ))}
+                      <BookshelfPreview library={library} />
+                    </Link>
+                  ))}
+                </div>
               </div>
             )}
           </section>

@@ -130,11 +130,20 @@ exports.Prisma.LibraryScalarFieldEnum = {
   wallId: 'wallId'
 };
 
+exports.Prisma.ShelfScalarFieldEnum = {
+  id: 'id',
+  name: 'name',
+  description: 'description',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt',
+  libraryId: 'libraryId'
+};
+
 exports.Prisma.VolumeScalarFieldEnum = {
   id: 'id',
   title: 'title',
   content: 'content',
-  libraryId: 'libraryId'
+  shelfId: 'shelfId'
 };
 
 exports.Prisma.SortOrder = {
@@ -151,6 +160,7 @@ exports.Prisma.NullsOrder = {
 exports.Prisma.ModelName = {
   Wall: 'Wall',
   Library: 'Library',
+  Shelf: 'Shelf',
   Volume: 'Volume'
 };
 

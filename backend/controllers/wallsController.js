@@ -5,7 +5,11 @@ async function listWalls(request, response) {
     include: {
       libraries: {
         include: {
-          volumes: true,
+          shelves: {
+            include: {
+              volumes: true,
+            },
+          },
         },
       },
     },
@@ -24,7 +28,11 @@ async function getWall(request, response) {
     include: {
       libraries: {
         include: {
-          volumes: true,
+          shelves: {
+            include: {
+              volumes: true,
+            },
+          },
         },
       },
     },

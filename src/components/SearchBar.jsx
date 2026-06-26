@@ -2,7 +2,7 @@ function SearchBar({ value, onChange }) {
   return (
     <input
       type="text"
-      placeholder="Buscar paredes, bibliotecas e volumes..."
+      placeholder="Buscar paredes, estantes e volumes..."
       value={value}
       onChange={onChange}
       className="input"

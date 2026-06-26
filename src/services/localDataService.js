@@ -30,6 +30,37 @@ function notifyLocalDataChanged() {
 
 syncSnapshots();
 
+export function buildVolumeEntry(volumeData, titleOverride) {
+  const shelf = volumeData.shelf;
+  const library = shelf?.library;
+  const wall = library?.wall;
+
+  return {
+    id: volumeData.id,
+    title: titleOverride ?? volumeData.title,
+    wallId: wall?.id ?? volumeData.wallId ?? null,
+    libraryId: library?.id ?? volumeData.libraryId ?? shelf?.libraryId ?? null,
+    shelfId: volumeData.shelfId ?? shelf?.id ?? null,
+    wallName: wall?.name ?? volumeData.wallName ?? null,
+    libraryName: library?.name ?? volumeData.libraryName ?? null,
+    shelfName: shelf?.name ?? volumeData.shelfName ?? null,
+  };
+}
+
+export function getVolumeContextLabel(entry) {
+  return [entry.wallName, entry.libraryName, entry.shelfName]
+    .filter(Boolean)
+    .join(" · ");
+}
+
+export function getVolumeNavigationState(entry) {
+  return {
+    wallId: entry.wallId ?? null,
+    libraryId: entry.libraryId ?? null,
+    shelfId: entry.shelfId ?? null,
+  };
+}
+
 export function subscribeLocalData(callback) {
   listeners.add(callback);
 
@@ -72,16 +103,67 @@ export function saveRecentVolume(volumeData) {
   );
   const limit = getRecentLimit();
 
-  const updated = [
-    {
-      id: volumeData.id,
-      title: volumeData.title,
-      libraryId: volumeData.libraryId,
-    },
-    ...recent,
-  ].slice(0, limit);
+  const updated = [buildVolumeEntry(volumeData), ...recent].slice(0, limit);
 
   localStorage.setItem(RECENT_VOLUMES_KEY, JSON.stringify(updated));
+  notifyLocalDataChanged();
+}
+
+export function updateStoredVolumeMetadata(volumeId, { title }) {
+  let changed = false;
+
+  const recent = readRecentFromStorage().map((item) => {
+    if (item.id !== volumeId) return item;
+
+    changed = true;
+    return { ...item, title };
+  });
+
+  const favorites = readFavoritesFromStorage().map((item) => {
+    if (item.id !== volumeId) return item;
+
+    changed = true;
+    return { ...item, title };
+  });
+
+  if (!changed) return;
+
+  localStorage.setItem(RECENT_VOLUMES_KEY, JSON.stringify(recent));
+  localStorage.setItem(FAVORITE_VOLUMES_KEY, JSON.stringify(favorites));
+  notifyLocalDataChanged();
+}
+
+export function saveFavoriteVolume(volumeData, titleOverride) {
+  const favorites = readFavoritesFromStorage().filter(
+    (item) => item.id !== volumeData.id,
+  );
+
+  const updated = [
+    buildVolumeEntry(volumeData, titleOverride),
+    ...favorites,
+  ];
+
+  localStorage.setItem(FAVORITE_VOLUMES_KEY, JSON.stringify(updated));
+  notifyLocalDataChanged();
+}
+
+export function removeFavoriteVolume(volumeId) {
+  const updated = readFavoritesFromStorage().filter(
+    (item) => item.id !== volumeId,
+  );
+
+  localStorage.setItem(FAVORITE_VOLUMES_KEY, JSON.stringify(updated));
+  notifyLocalDataChanged();
+}
+
+export function removeStoredVolume(volumeId) {
+  const recent = readRecentFromStorage().filter((item) => item.id !== volumeId);
+  const favorites = readFavoritesFromStorage().filter(
+    (item) => item.id !== volumeId,
+  );
+
+  localStorage.setItem(RECENT_VOLUMES_KEY, JSON.stringify(recent));
+  localStorage.setItem(FAVORITE_VOLUMES_KEY, JSON.stringify(favorites));
   notifyLocalDataChanged();
 }
 
