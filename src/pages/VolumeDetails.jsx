@@ -4,6 +4,8 @@ import { useParams } from "react-router-dom";
 import Breadcrumb from "../components/Breadcrumb";
 import LoadingSkeleton from "../components/LoadingSkeleton";
 
+import VolumeEditor from "../components/VolumeEditor";
+
 import {
   getFavoriteVolumes,
   notifyFavoritesChanged,
@@ -149,11 +151,11 @@ ${content}`;
         <button
           onClick={toggleFavorite}
           className={`text-3xl transition-colors duration-200 cursor-pointer ${
-            isFavorite
-              ? "text-amber-400"
-              : "text-zinc-400 hover:text-amber-400"
+            isFavorite ? "text-amber-400" : "text-zinc-400 hover:text-amber-400"
           }`}
-          aria-label={isFavorite ? "Remover dos favoritos" : "Adicionar aos favoritos"}
+          aria-label={
+            isFavorite ? "Remover dos favoritos" : "Adicionar aos favoritos"
+          }
         >
           {isFavorite ? "★" : "☆"}
         </button>
@@ -167,11 +169,13 @@ ${content}`;
         </span>
       </div>
 
-      <textarea
+      <VolumeEditor
+        //editorRef={contentRef}
         value={content}
-        onChange={(event) => setContent(event.target.value)}
-        placeholder="Escreva sua nota..."
-        className="input min-h-[500px] resize-none bg-zinc-900"
+        onChange={(nextContent) => {
+          setContent(nextContent);
+        }}
+        placeholder="Escreva sua nota... Use negrito, itálico, ## títulos e - listas."
       />
     </div>
   );
