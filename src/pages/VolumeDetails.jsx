@@ -2,6 +2,15 @@ import { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
 
 import Breadcrumb from "../components/Breadcrumb";
+import LoadingSkeleton from "../components/LoadingSkeleton";
+
+import {
+  getFavoriteVolumes,
+  notifyFavoritesChanged,
+  saveRecentVolume,
+} from "../services/localDataService";
+
+import { getVolumeById, updateVolume } from "../services/volumeService";
 
 function VolumeDetails() {
   const { id } = useParams();
@@ -12,39 +21,21 @@ function VolumeDetails() {
   const [saveStatus, setSaveStatus] = useState("Salvo");
   const [isFavorite, setIsFavorite] = useState(false);
 
-  function saveRecentVolume(volume) {
-    const recentVolumes =
-      JSON.parse(localStorage.getItem("recentVolumes")) || [];
-
-    const filtered = recentVolumes.filter((item) => item.id !== volume.id);
-
-    const updated = [
-      {
-        id: volume.id,
-        title: volume.title,
-        libraryId: volume.libraryId,
-      },
-
-      ...filtered,
-    ].slice(0, 5);
-
-    localStorage.setItem("recentVolumes", JSON.stringify(updated));
-  }
-
   useEffect(() => {
-    fetch(`${import.meta.env.VITE_API_URL}/volumes/${id}`)
-      .then((response) => response.json())
-      .then((data) => {
-        if (!data) return;
+    async function loadVolume() {
+      const data = await getVolumeById(id);
 
-        setVolume(data);
-        setTitle(data.title);
-        setContent(data.content || "");
+      if (!data) return;
 
-        saveRecentVolume(data);
+      setVolume(data);
+      setTitle(data.title);
+      setContent(data.content || "");
 
-        setIsFavorite(checkFavorite(data.id));
-      });
+      saveRecentVolume(data);
+      setIsFavorite(checkFavorite(data.id));
+    }
+
+    loadVolume();
   }, [id]);
 
   useEffect(() => {
@@ -60,30 +51,20 @@ function VolumeDetails() {
   }, [title, content]);
 
   async function handleAutoSave() {
-    await fetch(`${import.meta.env.VITE_API_URL}/volumes/${id}`, {
-      method: "PUT",
-
-      headers: {
-        "Content-Type": "application/json",
-      },
-
-      body: JSON.stringify({
-        title,
-        content,
-      }),
+    await updateVolume(id, {
+      title,
+      content,
     });
 
-    setSaveStatus("✓ Salvo");
+    setSaveStatus("Salvo");
   }
 
   function checkFavorite(volumeId) {
-    const favorites = JSON.parse(localStorage.getItem("favoriteVolumes")) || [];
-
-    return favorites.some((item) => item.id === volumeId);
+    return getFavoriteVolumes().some((item) => item.id === volumeId);
   }
 
   function toggleFavorite() {
-    const favorites = JSON.parse(localStorage.getItem("favoriteVolumes")) || [];
+    const favorites = getFavoriteVolumes();
 
     if (isFavorite) {
       const updated = favorites.filter((item) => item.id !== volume.id);
@@ -91,6 +72,7 @@ function VolumeDetails() {
       localStorage.setItem("favoriteVolumes", JSON.stringify(updated));
 
       setIsFavorite(false);
+      notifyFavoritesChanged();
 
       return;
     }
@@ -101,13 +83,13 @@ function VolumeDetails() {
         title,
         libraryId: volume.libraryId,
       },
-
       ...favorites,
     ];
 
     localStorage.setItem("favoriteVolumes", JSON.stringify(updated));
 
     setIsFavorite(true);
+    notifyFavoritesChanged();
   }
 
   function handleExport() {
@@ -124,16 +106,14 @@ ${content}`;
     const link = document.createElement("a");
 
     link.href = url;
-
     link.download = `${title}.txt`;
-
     link.click();
 
     URL.revokeObjectURL(url);
   }
 
   if (!volume) {
-    return <p>Carregando...</p>;
+    return <LoadingSkeleton />;
   }
 
   const breadcrumbItems = [
@@ -141,26 +121,21 @@ ${content}`;
       label: "Home",
       path: "/",
     },
-
     {
       label: volume.library?.wall?.name,
-
       path: `/walls/${volume.library?.wallId}`,
     },
-
     {
       label: volume.library?.name,
-
       path: `/libraries/${volume.libraryId}`,
     },
-
     {
       label: title,
     },
   ];
 
   return (
-    <div className="max-w-4xl mx-auto p-8">
+    <div className="max-w-4xl mx-auto">
       <Breadcrumb items={breadcrumbItems} />
 
       <div className="flex justify-between items-center gap-4 mb-6">
@@ -168,20 +143,22 @@ ${content}`;
           type="text"
           value={title}
           onChange={(event) => setTitle(event.target.value)}
-          className="w-full text-3xl font-bold border-none outline-none bg-transparent"
+          className="w-full text-3xl font-bold border-none outline-none bg-transparent focus:ring-0"
         />
 
         <button
           onClick={toggleFavorite}
-          className="text-3xl hover:scale-110 transition cursor-pointer"
+          className={`text-3xl transition-colors duration-200 cursor-pointer ${
+            isFavorite
+              ? "text-amber-400"
+              : "text-zinc-400 hover:text-amber-400"
+          }`}
+          aria-label={isFavorite ? "Remover dos favoritos" : "Adicionar aos favoritos"}
         >
           {isFavorite ? "★" : "☆"}
         </button>
 
-        <button
-          onClick={handleExport}
-          className="bg-zinc-800 hover:bg-zinc-700 px-3 py-2 rounded-lg text-sm transition cursor-pointer"
-        >
+        <button onClick={handleExport} className="btn-secondary">
           Exportar
         </button>
 
@@ -194,7 +171,7 @@ ${content}`;
         value={content}
         onChange={(event) => setContent(event.target.value)}
         placeholder="Escreva sua nota..."
-        className="w-full min-h-[500px] p-4 border border-zinc-800 rounded-xl resize-none outline-none bg-zinc-900"
+        className="input min-h-[500px] resize-none bg-zinc-900"
       />
     </div>
   );

@@ -2,6 +2,8 @@ import { useEffect, useState } from "react";
 
 import { useParams, Link } from "react-router-dom";
 
+import LoadingSkeleton from "../components/LoadingSkeleton";
+
 import { getWallById } from "../services/wallService";
 
 import {
@@ -16,10 +18,12 @@ function WallDetails() {
   const { id } = useParams();
 
   const [wall, setWall] = useState(null);
-
   const [name, setName] = useState("");
-
   const [description, setDescription] = useState("");
+  const [editingId, setEditingId] = useState(null);
+  const [editName, setEditName] = useState("");
+  const [editDescription, setEditDescription] = useState("");
+  const [deletingId, setDeletingId] = useState(null);
 
   useEffect(() => {
     loadWall();
@@ -48,43 +52,47 @@ function WallDetails() {
     await loadWall();
   }
 
-  async function handleEditLibrary(library) {
-    const newName = prompt("Novo nome da biblioteca:", library.name);
+  function startEditLibrary(library) {
+    setEditingId(library.id);
+    setEditName(library.name);
+    setEditDescription(library.description || "");
+    setDeletingId(null);
+  }
 
-    if (!newName) return;
+  function cancelEditLibrary() {
+    setEditingId(null);
+    setEditName("");
+    setEditDescription("");
+  }
 
-    const newDescription = prompt("Nova descrição:", library.description);
+  async function saveEditLibrary(libraryId) {
+    if (!editName.trim()) return;
 
-    await updateLibrary(library.id, {
-      name: newName,
-
-      description: newDescription || "",
+    await updateLibrary(libraryId, {
+      name: editName,
+      description: editDescription || "",
     });
 
+    cancelEditLibrary();
     await loadWall();
   }
 
-  async function handleDeleteLibrary(libraryId) {
-    const confirmed = window.confirm("Deseja excluir esta biblioteca?");
-
-    if (!confirmed) return;
-
+  async function confirmDeleteLibrary(libraryId) {
     await deleteLibrary(libraryId);
 
+    setDeletingId(null);
     await loadWall();
   }
 
   if (!wall) {
-    return <h1>Carregando parede...</h1>;
+    return <LoadingSkeleton />;
   }
 
   const breadcrumbItems = [
     {
       label: "Home",
-
       path: "/",
     },
-
     {
       label: wall.name,
     },
@@ -100,7 +108,7 @@ function WallDetails() {
         <p className="text-zinc-400 mt-2">{wall.description}</p>
       </div>
 
-      <div className="bg-zinc-900 border border-zinc-800 rounded-2xl p-6 mb-8">
+      <div className="card mb-8">
         <h2 className="text-xl font-bold mb-4">Nova Biblioteca</h2>
 
         <form onSubmit={handleCreateLibrary} className="space-y-4">
@@ -109,20 +117,17 @@ function WallDetails() {
             placeholder="Nome da biblioteca"
             value={name}
             onChange={(event) => setName(event.target.value)}
-            className="w-full bg-zinc-800 border border-zinc-700 rounded-lg px-4 py-3"
+            className="input-sm"
           />
 
           <textarea
             placeholder="Descrição"
             value={description}
             onChange={(event) => setDescription(event.target.value)}
-            className="w-full bg-zinc-800 border border-zinc-700 rounded-lg px-4 py-3"
+            className="input-sm"
           />
 
-          <button
-            type="submit"
-            className="bg-white text-black px-5 py-2 rounded-lg font-medium hover:opacity-90 transition cursor-pointer"
-          >
+          <button type="submit" className="btn-primary">
             Criar Biblioteca
           </button>
         </form>
@@ -136,39 +141,100 @@ function WallDetails() {
         ) : (
           <div className="grid grid-cols-3 gap-4">
             {wall.libraries.map((library) => (
-              <div
-                key={library.id}
-                className="bg-zinc-900 border border-zinc-800 rounded-xl p-4 hover:bg-zinc-800 transition"
-              >
-                <Link to={`/libraries/${library.id}`}>
-                  <h3 className="font-semibold text-lg hover:text-zinc-300">
-                    {library.name}
-                  </h3>
+              <div key={library.id} className="card-sm-hover">
+                {editingId === library.id ? (
+                  <div className="space-y-3">
+                    <input
+                      type="text"
+                      value={editName}
+                      onChange={(event) => setEditName(event.target.value)}
+                      className="input-sm"
+                      placeholder="Nome da biblioteca"
+                    />
 
-                  <p className="text-zinc-400 text-sm mt-2">
-                    {library.description}
-                  </p>
+                    <textarea
+                      value={editDescription}
+                      onChange={(event) =>
+                        setEditDescription(event.target.value)
+                      }
+                      className="input-sm"
+                      placeholder="Descrição"
+                    />
 
-                  <p className="text-zinc-500 text-xs mt-4">
-                    {library.volumes.length} volumes
-                  </p>
-                </Link>
+                    <div className="flex gap-2">
+                      <button
+                        onClick={() => saveEditLibrary(library.id)}
+                        className="btn-primary"
+                      >
+                        Salvar
+                      </button>
 
-                <div className="flex gap-2 mt-4">
-                  <button
-                    onClick={() => handleEditLibrary(library)}
-                    className="text-sm bg-zinc-800 px-3 py-1 rounded hover:bg-zinc-700 transition cursor-pointer"
-                  >
-                    Editar
-                  </button>
+                      <button
+                        onClick={cancelEditLibrary}
+                        className="btn-secondary-sm"
+                      >
+                        Cancelar
+                      </button>
+                    </div>
+                  </div>
+                ) : (
+                  <>
+                    <Link to={`/libraries/${library.id}`}>
+                      <h3 className="font-semibold text-lg hover:text-zinc-300">
+                        {library.name}
+                      </h3>
 
-                  <button
-                    onClick={() => handleDeleteLibrary(library.id)}
-                    className="text-sm bg-red-900 px-3 py-1 rounded hover:opacity-90 transition cursor-pointer"
-                  >
-                    Excluir
-                  </button>
-                </div>
+                      <p className="text-zinc-400 text-sm mt-2">
+                        {library.description}
+                      </p>
+
+                      <p className="text-zinc-500 text-xs mt-4">
+                        {library.volumes.length} volumes
+                      </p>
+                    </Link>
+
+                    <div className="flex gap-2 mt-4 items-center flex-wrap">
+                      <button
+                        onClick={() => startEditLibrary(library)}
+                        className="btn-secondary-sm"
+                      >
+                        Editar
+                      </button>
+
+                      {deletingId === library.id ? (
+                        <>
+                          <span className="text-xs text-zinc-400">
+                            Tem certeza?
+                          </span>
+
+                          <button
+                            onClick={() => confirmDeleteLibrary(library.id)}
+                            className="btn-danger-sm"
+                          >
+                            Sim, excluir
+                          </button>
+
+                          <button
+                            onClick={() => setDeletingId(null)}
+                            className="btn-secondary-sm"
+                          >
+                            Cancelar
+                          </button>
+                        </>
+                      ) : (
+                        <button
+                          onClick={() => {
+                            setDeletingId(library.id);
+                            cancelEditLibrary();
+                          }}
+                          className="btn-danger-sm"
+                        >
+                          Excluir
+                        </button>
+                      )}
+                    </div>
+                  </>
+                )}
               </div>
             ))}
           </div>

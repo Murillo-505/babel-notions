@@ -2,7 +2,9 @@ import { useEffect, useState } from "react";
 
 import { Link } from "react-router-dom";
 
-import SearchBar from "../components/SearchBar";
+import LoadingSkeleton from "../components/LoadingSkeleton";
+
+import { useSearch } from "../context/SearchContext";
 
 import {
   getWalls,
@@ -12,20 +14,21 @@ import {
 } from "../services/wallService";
 
 function Home() {
-  const [search, setSearch] = useState("");
+  const { search } = useSearch();
 
   const [walls, setWalls] = useState([]);
-
   const [loading, setLoading] = useState(true);
+  const [openInput, setOpenInput] = useState(false);
+  const [newWallName, setNewWallName] = useState("");
+  const [newWallDescription, setNewWallDescription] = useState("");
+  const [editingId, setEditingId] = useState(null);
+  const [editName, setEditName] = useState("");
+  const [editDescription, setEditDescription] = useState("");
+  const [deletingId, setDeletingId] = useState(null);
 
   useEffect(() => {
     async function loadWalls() {
       const data = await getWalls();
-
-      console.log(data);
-
-      setWalls(data);
-      setLoading(false);
 
       setWalls(data);
       setLoading(false);
@@ -58,7 +61,6 @@ function Home() {
 
       return {
         ...wall,
-
         libraries: matchWall ? wall.libraries : filteredLibraries,
       };
     })
@@ -105,49 +107,54 @@ function Home() {
         );
 
   async function handleCreateWall() {
-    const name = prompt("Nome da parede:");
-
-    if (!name) return;
-
-    const description = prompt("Descrição da parede:");
+    if (!newWallName.trim()) return;
 
     await createWall({
-      name,
-
-      description: description || "",
+      name: newWallName,
+      description: newWallDescription.trim() || "",
     });
+
+    setOpenInput(false);
+    setNewWallName("");
+    setNewWallDescription("");
 
     const updatedWalls = await getWalls();
 
     setWalls(updatedWalls);
   }
 
-  async function handleEditWall(wall) {
-    const newName = prompt("Novo nome:", wall.name);
+  function startEditWall(wall) {
+    setEditingId(wall.id);
+    setEditName(wall.name);
+    setEditDescription(wall.description || "");
+    setDeletingId(null);
+  }
 
-    if (!newName) return;
+  function cancelEditWall() {
+    setEditingId(null);
+    setEditName("");
+    setEditDescription("");
+  }
 
-    const newDescription = prompt("Nova descrição:", wall.description);
+  async function saveEditWall(wallId) {
+    if (!editName.trim()) return;
 
-    await updateWall(wall.id, {
-      name: newName,
-
-      description: newDescription || "",
+    await updateWall(wallId, {
+      name: editName,
+      description: editDescription || "",
     });
+
+    cancelEditWall();
 
     const updatedWalls = await getWalls();
 
     setWalls(updatedWalls);
   }
 
-  async function handleDeleteWall(id) {
-    const confirmed = window.confirm(
-      "Tem certeza que deseja excluir esta parede?",
-    );
-
-    if (!confirmed) return;
-
+  async function confirmDeleteWall(id) {
     await deleteWall(id);
+
+    setDeletingId(null);
 
     const updatedWalls = await getWalls();
 
@@ -155,65 +162,75 @@ function Home() {
   }
 
   if (loading) {
-    return <h1 className="text-xl">Carregando paredes...</h1>;
+    return <LoadingSkeleton />;
   }
 
   return (
     <div>
-      <h1 className="text-4xl font-bold mb-2">Babel Notions</h1>
-
       <p className="text-zinc-400 mb-6">
         Organize seu conhecimento em paredes, bibliotecas e volumes.
       </p>
 
       <div className="grid grid-cols-3 gap-4 mb-8">
-        <div className="bg-zinc-900 border border-zinc-800 rounded-2xl p-5">
+        <div className="card p-5">
           <p className="text-zinc-500 text-sm">Paredes</p>
-
           <h2 className="text-3xl font-bold">{totalWalls}</h2>
         </div>
 
-        <div className="bg-zinc-900 border border-zinc-800 rounded-2xl p-5">
+        <div className="card p-5">
           <p className="text-zinc-500 text-sm">Bibliotecas</p>
-
           <h2 className="text-3xl font-bold">{totalLibraries}</h2>
         </div>
 
-        <div className="bg-zinc-900 border border-zinc-800 rounded-2xl p-5">
+        <div className="card p-5">
           <p className="text-zinc-500 text-sm">Volumes</p>
-
           <h2 className="text-3xl font-bold">{totalVolumes}</h2>
         </div>
       </div>
 
       <button
-        onClick={handleCreateWall}
-        className="bg-white text-black px-5 py-2 rounded-xl font-medium hover:opacity-90 transition cursor-pointer mb-6"
+        onClick={() => setOpenInput(!openInput)}
+        className="btn-primary mb-6"
       >
-        + Nova Parede
+        {`+ ${openInput ? "Cancelar" : "Nova Parede"}`}
       </button>
 
-      <div className="mb-8">
-        <SearchBar
-          value={search}
-          onChange={(event) => setSearch(event.target.value)}
-        />
-      </div>
+      {openInput && (
+        <div className="mb-8 space-y-4 w-96">
+          <input
+            type="text"
+            placeholder="Nome da parede"
+            value={newWallName}
+            onChange={(event) => setNewWallName(event.target.value)}
+            className="input"
+          />
+
+          <input
+            type="text"
+            placeholder="Descrição da parede"
+            value={newWallDescription}
+            onChange={(event) => setNewWallDescription(event.target.value)}
+            className="input"
+          />
+
+          <button onClick={handleCreateWall} className="btn-primary">
+            Criar Parede
+          </button>
+        </div>
+      )}
 
       {searchResults.length > 0 && (
-        <div className="bg-zinc-900 border border-zinc-800 rounded-2xl p-4 mb-8">
+        <div className="card p-4 mb-8">
           <h2 className="font-bold text-lg mb-4">Resultados da Busca</h2>
 
           <div className="space-y-2">
-            {searchResults.slice(0, 5).map((result, index) => (
+            {searchResults.slice(0, 5).map((result) => (
               <Link
-                key={index}
+                key={result.volume.id}
                 to={`/volumes/${result.volume.id}`}
-                className="block p-4 rounded-xl hover:bg-zinc-800 transition border border-transparent hover:border-zinc-700"
+                className="block p-4 rounded-xl hover:bg-zinc-800 transition-colors duration-200 border border-transparent hover:border-zinc-700 cursor-pointer"
               >
-                <p className="font-semibold text-lg">
-                  📖 {result.volume.title}
-                </p>
+                <p className="font-semibold text-lg">{result.volume.title}</p>
 
                 <p className="text-zinc-400 text-sm mt-2">
                   {result.volume.content
@@ -222,9 +239,9 @@ function Home() {
                 </p>
 
                 <p className="text-xs text-zinc-500 mt-3">
-                  📚 {result.library.name}
+                  {result.library.name}
                   {" • "}
-                  🧱 {result.wall.name}
+                  {result.wall.name}
                 </p>
               </Link>
             ))}
@@ -234,36 +251,93 @@ function Home() {
 
       <div className="space-y-8">
         {filteredWalls.map((wall) => (
-          <section
-            key={wall.id}
-            className="bg-zinc-900 border border-zinc-800 rounded-2xl p-6"
-          >
-            <Link
-              to={`/walls/${wall.id}`}
-              className="block mb-4 hover:opacity-90 transition"
-            >
-              <h2 className="text-2xl font-bold hover:text-zinc-300">
-                {wall.name}
-              </h2>
+          <section key={wall.id} className="card">
+            {editingId === wall.id ? (
+              <div className="mb-4 space-y-3">
+                <input
+                  type="text"
+                  value={editName}
+                  onChange={(event) => setEditName(event.target.value)}
+                  className="input"
+                  placeholder="Nome da parede"
+                />
 
-              <p className="text-zinc-400">{wall.description}</p>
-            </Link>
+                <input
+                  type="text"
+                  value={editDescription}
+                  onChange={(event) => setEditDescription(event.target.value)}
+                  className="input"
+                  placeholder="Descrição da parede"
+                />
 
-            <div className="flex gap-2 mb-4">
-              <button
-                onClick={() => handleEditWall(wall)}
-                className="bg-zinc-800 hover:bg-zinc-700 px-4 py-2 rounded-lg text-sm transition cursor-pointer"
-              >
-                Editar
-              </button>
+                <div className="flex gap-2">
+                  <button
+                    onClick={() => saveEditWall(wall.id)}
+                    className="btn-primary"
+                  >
+                    Salvar
+                  </button>
 
-              <button
-                onClick={() => handleDeleteWall(wall.id)}
-                className="bg-red-900 hover:bg-red-800 px-4 py-2 rounded-lg text-sm transition cursor-pointer"
-              >
-                Excluir
-              </button>
-            </div>
+                  <button onClick={cancelEditWall} className="btn-secondary">
+                    Cancelar
+                  </button>
+                </div>
+              </div>
+            ) : (
+              <>
+                <Link
+                  to={`/walls/${wall.id}`}
+                  className="block mb-4 hover:opacity-90 transition-opacity duration-200"
+                >
+                  <h2 className="text-2xl font-bold hover:text-zinc-300">
+                    {wall.name}
+                  </h2>
+
+                  <p className="text-zinc-400">{wall.description}</p>
+                </Link>
+
+                <div className="flex gap-2 mb-4 items-center flex-wrap">
+                  <button
+                    onClick={() => startEditWall(wall)}
+                    className="btn-secondary"
+                  >
+                    Editar
+                  </button>
+
+                  {deletingId === wall.id ? (
+                    <>
+                      <span className="text-sm text-zinc-400">
+                        Tem certeza?
+                      </span>
+
+                      <button
+                        onClick={() => confirmDeleteWall(wall.id)}
+                        className="btn-danger"
+                      >
+                        Sim, excluir
+                      </button>
+
+                      <button
+                        onClick={() => setDeletingId(null)}
+                        className="btn-secondary"
+                      >
+                        Cancelar
+                      </button>
+                    </>
+                  ) : (
+                    <button
+                      onClick={() => {
+                        setDeletingId(wall.id);
+                        cancelEditWall();
+                      }}
+                      className="btn-danger"
+                    >
+                      Excluir
+                    </button>
+                  )}
+                </div>
+              </>
+            )}
 
             {wall.libraries.length === 0 ? (
               <p className="text-zinc-500">Nenhuma biblioteca encontrada.</p>
@@ -273,7 +347,7 @@ function Home() {
                   <Link
                     key={library.id}
                     to={`/libraries/${library.id}`}
-                    className="bg-zinc-800 hover:bg-zinc-700 transition rounded-xl p-4 border border-zinc-700"
+                    className="bg-zinc-800 hover:bg-zinc-700 transition-colors duration-200 rounded-xl p-4 border border-zinc-700 cursor-pointer"
                   >
                     <h3 className="font-semibold text-lg">{library.name}</h3>
 

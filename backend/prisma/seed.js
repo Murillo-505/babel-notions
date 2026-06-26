@@ -1,65 +1,48 @@
-require('dotenv').config()
-
-const { PrismaClient } = require('@prisma/client')
-const { PrismaPg } = require('@prisma/adapter-pg')
-const connectionString = process.env.DATABASE_URL
-const adapter = new PrismaPg({ connectionString })
-const prisma = new PrismaClient({ adapter })
+const prisma = require("../config/prisma");
 
 async function main() {
-  await prisma.volume.deleteMany()
-  await prisma.library.deleteMany()
-  await prisma.wall.deleteMany()
+  await prisma.volume.deleteMany();
+  await prisma.library.deleteMany();
+  await prisma.wall.deleteMany();
 
   await prisma.wall.create({
     data: {
-      name: 'Faculdade',
+      name: "Faculdade",
 
-      description:
-        'Conteúdos acadêmicos e estudos.',
+      description: "Conteúdos acadêmicos e estudos.",
 
       libraries: {
         create: [
           {
-            name:
-              'Computação',
+            name: "Computação",
 
-            description:
-              'Conteúdo de programação e tecnologia.',
+            description: "Conteúdo de programação e tecnologia.",
 
             volumes: {
               create: [
                 {
-                  title:
-                    'React',
-                  content:
-                    'Componentes, props e estados.',
+                  title: "React",
+                  content: "Componentes, props e estados.",
                 },
 
                 {
-                  title:
-                    'Banco de Dados',
-                  content:
-                    'SQL, PostgreSQL e modelagem.',
+                  title: "Banco de Dados",
+                  content: "SQL, PostgreSQL e modelagem.",
                 },
               ],
             },
           },
 
           {
-            name:
-              'Filosofia',
+            name: "Filosofia",
 
-            description:
-              'Estudos filosóficos.',
+            description: "Estudos filosóficos.",
 
             volumes: {
               create: [
                 {
-                  title:
-                    'Estoicismo',
-                  content:
-                    'Sêneca, Marco Aurélio e Epicteto.',
+                  title: "Estoicismo",
+                  content: "Sêneca, Marco Aurélio e Epicteto.",
                 },
               ],
             },
@@ -67,33 +50,29 @@ async function main() {
         ],
       },
     },
-  })
+  });
 
   await prisma.wall.create({
     data: {
-      name: 'Pessoal',
+      name: "Pessoal",
 
-      description:
-        'Interesses e desenvolvimento pessoal.',
+      description: "Interesses e desenvolvimento pessoal.",
     },
-  })
+  });
 
   await prisma.wall.create({
     data: {
-      name: 'Projetos',
+      name: "Projetos",
 
-      description:
-        'Projetos pessoais e ideias.',
+      description: "Projetos pessoais e ideias.",
     },
-  })
+  });
 
-  console.log(
-    'Banco populado com walls'
-  )
+  console.log("Banco populado com walls");
 }
 
 main()
   .catch(console.error)
   .finally(async () => {
-    await prisma.$disconnect()
-  })
+    await prisma.$disconnect();
+  });
