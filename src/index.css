@@ -52,4 +52,76 @@
   .input-sm {
     @apply w-full bg-zinc-800 border border-zinc-700 rounded-lg px-4 py-3 outline-none focus:border-zinc-600 focus:ring-1 focus:ring-zinc-600 placeholder:text-zinc-500;
   }
+
+  .volume-editor {
+    @apply min-h-[min(70vh,40rem)] bg-zinc-950/80 leading-relaxed rounded-b-xl rounded-t-none border-t-0;
+  }
+
+  .volume-editor-shell {
+    @apply overflow-hidden rounded-xl border border-zinc-800 bg-zinc-950/80;
+  }
+
+  .volume-editor-toolbar {
+    @apply flex flex-wrap items-center justify-between gap-3 border-b border-zinc-800 bg-zinc-900/60 px-3 py-2;
+  }
+
+  .volume-editor-toolbar-btn {
+    @apply rounded-md border border-zinc-700/80 bg-zinc-800/80 px-2.5 py-1 text-xs text-zinc-200 transition-colors duration-200 hover:border-zinc-600 hover:bg-zinc-800 cursor-pointer disabled:cursor-not-allowed disabled:opacity-40;
+  }
+
+  .volume-editor-tabs {
+    @apply flex gap-1 rounded-lg border border-zinc-800 bg-zinc-950/80 p-0.5;
+  }
+
+  .volume-editor-tab {
+    @apply rounded-md px-3 py-1 text-xs text-zinc-400 transition-colors duration-200 hover:text-zinc-200 cursor-pointer;
+  }
+
+  .volume-editor-tab-active {
+    @apply bg-zinc-800 text-zinc-100;
+  }
+
+  .volume-editor-preview {
+    @apply min-h-[min(70vh,40rem)] overflow-y-auto p-4 sm:p-5;
+  }
+
+  .markdown-preview {
+    @apply space-y-3 text-zinc-200;
+  }
+
+  .markdown-h1 {
+    @apply text-2xl font-bold text-zinc-100;
+  }
+
+  .markdown-h2 {
+    @apply text-xl font-bold text-zinc-100;
+  }
+
+  .markdown-h3 {
+    @apply text-lg font-semibold text-zinc-100;
+  }
+
+  .markdown-paragraph {
+    @apply leading-relaxed text-zinc-300;
+  }
+
+  .markdown-list {
+    @apply list-disc space-y-1 pl-5 text-zinc-300;
+  }
+
+  .markdown-quote {
+    @apply border-l-2 border-zinc-600 pl-4 italic text-zinc-400;
+  }
+
+  .markdown-inline-code {
+    @apply rounded bg-zinc-800 px-1.5 py-0.5 font-mono text-sm text-amber-200/90;
+  }
+
+  .markdown-code-block {
+    @apply overflow-x-auto rounded-lg border border-zinc-800 bg-zinc-950 p-4 font-mono text-sm text-zinc-300;
+  }
+
+  .markdown-link {
+    @apply text-sky-400 underline underline-offset-2 hover:text-sky-300;
+  }
 }
