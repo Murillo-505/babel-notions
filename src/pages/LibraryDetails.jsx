@@ -2,25 +2,26 @@ import { useEffect, useState } from "react";
 import { useParams, Link } from "react-router-dom";
 
 import LoadingSkeleton from "../components/LoadingSkeleton";
+import EntityActionsMenu from "../components/EntityActionsMenu";
+import CreateEntityForm from "../components/CreateEntityForm";
 
 import { getLibraryById } from "../services/libraryService";
-
-import {
-  createVolume,
-  deleteVolume,
-  updateVolume,
-} from "../services/volumeService";
+import { createShelf, deleteShelf, updateShelf } from "../services/shelfService";
 
 import Breadcrumb from "../components/Breadcrumb";
+import ShelfRow from "../components/library/ShelfRow";
 
 function LibraryDetails() {
   const { id } = useParams();
 
   const [library, setLibrary] = useState(null);
-  const [title, setTitle] = useState("");
+  const [shelfName, setShelfName] = useState("");
+  const [shelfDescription, setShelfDescription] = useState("");
   const [editingId, setEditingId] = useState(null);
-  const [editTitle, setEditTitle] = useState("");
+  const [editName, setEditName] = useState("");
+  const [editDescription, setEditDescription] = useState("");
   const [deletingId, setDeletingId] = useState(null);
+  const [showCreateForm, setShowCreateForm] = useState(false);
 
   useEffect(() => {
     loadLibrary();
@@ -32,47 +33,51 @@ function LibraryDetails() {
     setLibrary(data);
   }
 
-  async function handleCreateVolume(event) {
+  async function handleCreateShelf(event) {
     event.preventDefault();
 
-    if (!title.trim()) return;
+    if (!shelfName.trim()) return;
 
-    await createVolume({
-      title,
+    await createShelf({
+      name: shelfName,
+      description: shelfDescription,
       libraryId: Number(id),
-      content: "",
     });
 
-    setTitle("");
+    setShelfName("");
+    setShelfDescription("");
+    setShowCreateForm(false);
 
     await loadLibrary();
   }
 
-  function startEditVolume(volume) {
-    setEditingId(volume.id);
-    setEditTitle(volume.title);
+  function startEditShelf(shelf) {
+    setEditingId(shelf.id);
+    setEditName(shelf.name);
+    setEditDescription(shelf.description || "");
     setDeletingId(null);
   }
 
-  function cancelEditVolume() {
+  function cancelEditShelf() {
     setEditingId(null);
-    setEditTitle("");
+    setEditName("");
+    setEditDescription("");
   }
 
-  async function saveEditVolume(volume) {
-    if (!editTitle.trim()) return;
+  async function saveEditShelf(shelfId) {
+    if (!editName.trim()) return;
 
-    await updateVolume(volume.id, {
-      title: editTitle,
-      content: volume.content,
+    await updateShelf(shelfId, {
+      name: editName,
+      description: editDescription || "",
     });
 
-    cancelEditVolume();
+    cancelEditShelf();
     await loadLibrary();
   }
 
-  async function confirmDeleteVolume(volumeId) {
-    await deleteVolume(volumeId);
+  async function confirmDeleteShelf(shelfId) {
+    await deleteShelf(shelfId);
 
     setDeletingId(null);
     await loadLibrary();
@@ -97,62 +102,75 @@ function LibraryDetails() {
   ];
 
   return (
-    <div>
+    <div className="min-w-0 max-w-full">
       <Breadcrumb items={breadcrumbItems} />
 
       <div className="mt-4 mb-8">
-        <h1 className="text-4xl font-bold mb-2">{library.name}</h1>
+        <h1 className="text-4xl font-bold">{library.name}</h1>
 
-        <p className="text-zinc-400">{library.description}</p>
+        <p className="text-zinc-400 mt-2">{library.description}</p>
       </div>
 
-      <div className="card mb-8">
-        <h2 className="text-xl font-bold mb-4">Novo Volume</h2>
+      <CreateEntityForm
+        entityName="Prateleira"
+        isOpen={showCreateForm}
+        onToggle={() => setShowCreateForm(!showCreateForm)}
+        onSubmit={handleCreateShelf}
+      >
+        <input
+          type="text"
+          placeholder="Nome da prateleira"
+          value={shelfName}
+          onChange={(event) => setShelfName(event.target.value)}
+          className="input-sm"
+        />
 
-        <form onSubmit={handleCreateVolume} className="flex gap-4">
-          <input
-            type="text"
-            placeholder="Nome do volume"
-            value={title}
-            onChange={(event) => setTitle(event.target.value)}
-            className="input-sm flex-1"
-          />
-
-          <button type="submit" className="btn-primary">
-            Criar
-          </button>
-        </form>
-      </div>
+        <textarea
+          placeholder="Descrição"
+          value={shelfDescription}
+          onChange={(event) => setShelfDescription(event.target.value)}
+          className="input-sm"
+        />
+      </CreateEntityForm>
 
       <section>
-        <h2 className="text-2xl font-bold mb-4">Volumes</h2>
+        <h2 className="text-2xl font-bold mb-4">Prateleiras</h2>
 
-        {library.volumes.length === 0 ? (
-          <p className="text-zinc-500">Nenhum volume criado.</p>
+        {(library.shelves ?? []).length === 0 ? (
+          <p className="text-zinc-500">Nenhuma prateleira cadastrada.</p>
         ) : (
-          <div className="grid grid-cols-3 gap-4">
-            {library.volumes.map((volume) => (
-              <div key={volume.id} className="card-sm">
-                {editingId === volume.id ? (
+          <div className="flex flex-col gap-4">
+            {(library.shelves ?? []).map((shelf) => (
+              <div key={shelf.id} className="library-bookshelf relative p-3">
+                {editingId === shelf.id ? (
                   <div className="space-y-3">
                     <input
                       type="text"
-                      value={editTitle}
-                      onChange={(event) => setEditTitle(event.target.value)}
+                      value={editName}
+                      onChange={(event) => setEditName(event.target.value)}
                       className="input-sm"
-                      placeholder="Nome do volume"
+                      placeholder="Nome da prateleira"
+                    />
+
+                    <textarea
+                      value={editDescription}
+                      onChange={(event) =>
+                        setEditDescription(event.target.value)
+                      }
+                      className="input-sm"
+                      placeholder="Descrição"
                     />
 
                     <div className="flex gap-2">
                       <button
-                        onClick={() => saveEditVolume(volume)}
+                        onClick={() => saveEditShelf(shelf.id)}
                         className="btn-primary"
                       >
                         Salvar
                       </button>
 
                       <button
-                        onClick={cancelEditVolume}
+                        onClick={cancelEditShelf}
                         className="btn-secondary-sm"
                       >
                         Cancelar
@@ -161,58 +179,32 @@ function LibraryDetails() {
                   </div>
                 ) : (
                   <>
-                    <Link to={`/volumes/${volume.id}`}>
-                      <h3 className="font-semibold text-lg hover:text-zinc-300">
-                        {volume.title}
+                    <div className="absolute top-3 right-3 z-10">
+                      <EntityActionsMenu
+                        ariaLabel="Ações da prateleira"
+                        isDeleting={deletingId === shelf.id}
+                        onStartEdit={() => startEditShelf(shelf)}
+                        onStartDelete={() => {
+                          setDeletingId(shelf.id);
+                          cancelEditShelf();
+                        }}
+                        onCancelDelete={() => setDeletingId(null)}
+                        onConfirmDelete={() => confirmDeleteShelf(shelf.id)}
+                      />
+                    </div>
+
+                    <Link
+                      to={`/shelves/${shelf.id}`}
+                      className="block cursor-pointer pr-10"
+                    >
+                      <h3 className="mb-3 truncate px-1 font-semibold text-lg hover:text-zinc-300">
+                        {shelf.name}
                       </h3>
 
-                      <p className="text-zinc-400 text-sm mt-2 line-clamp-3">
-                        {volume.content
-                          ? volume.content.slice(0, 100) + "..."
-                          : "Volume vazio"}
-                      </p>
+                      <div className="library-bookshelf-body p-3">
+                        <ShelfRow shelf={shelf} readOnly />
+                      </div>
                     </Link>
-
-                    <div className="flex gap-2 mt-4 items-center flex-wrap">
-                      <button
-                        onClick={() => startEditVolume(volume)}
-                        className="btn-secondary-sm"
-                      >
-                        Editar
-                      </button>
-
-                      {deletingId === volume.id ? (
-                        <>
-                          <span className="text-xs text-zinc-400">
-                            Tem certeza?
-                          </span>
-
-                          <button
-                            onClick={() => confirmDeleteVolume(volume.id)}
-                            className="btn-danger-sm"
-                          >
-                            Sim, excluir
-                          </button>
-
-                          <button
-                            onClick={() => setDeletingId(null)}
-                            className="btn-secondary-sm"
-                          >
-                            Cancelar
-                          </button>
-                        </>
-                      ) : (
-                        <button
-                          onClick={() => {
-                            setDeletingId(volume.id);
-                            cancelEditVolume();
-                          }}
-                          className="btn-danger-sm"
-                        >
-                          Excluir
-                        </button>
-                      )}
-                    </div>
                   </>
                 )}
               </div>

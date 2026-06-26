@@ -24,6 +24,11 @@ export type Wall = $Result.DefaultSelection<Prisma.$WallPayload>
  */
 export type Library = $Result.DefaultSelection<Prisma.$LibraryPayload>
 /**
+ * Model Shelf
+ * 
+ */
+export type Shelf = $Result.DefaultSelection<Prisma.$ShelfPayload>
+/**
  * Model Volume
  * 
  */
@@ -169,6 +174,16 @@ export class PrismaClient<
     * ```
     */
   get library(): Prisma.LibraryDelegate<ExtArgs, ClientOptions>;
+
+  /**
+   * `prisma.shelf`: Exposes CRUD operations for the **Shelf** model.
+    * Example usage:
+    * ```ts
+    * // Fetch zero or more Shelves
+    * const shelves = await prisma.shelf.findMany()
+    * ```
+    */
+  get shelf(): Prisma.ShelfDelegate<ExtArgs, ClientOptions>;
 
   /**
    * `prisma.volume`: Exposes CRUD operations for the **Volume** model.
@@ -615,6 +630,7 @@ export namespace Prisma {
   export const ModelName: {
     Wall: 'Wall',
     Library: 'Library',
+    Shelf: 'Shelf',
     Volume: 'Volume'
   };
 
@@ -631,7 +647,7 @@ export namespace Prisma {
       omit: GlobalOmitOptions
     }
     meta: {
-      modelProps: "wall" | "library" | "volume"
+      modelProps: "wall" | "library" | "shelf" | "volume"
       txIsolationLevel: Prisma.TransactionIsolationLevel
     }
     model: {
@@ -780,6 +796,80 @@ export namespace Prisma {
           count: {
             args: Prisma.LibraryCountArgs<ExtArgs>
             result: $Utils.Optional<LibraryCountAggregateOutputType> | number
+          }
+        }
+      }
+      Shelf: {
+        payload: Prisma.$ShelfPayload<ExtArgs>
+        fields: Prisma.ShelfFieldRefs
+        operations: {
+          findUnique: {
+            args: Prisma.ShelfFindUniqueArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$ShelfPayload> | null
+          }
+          findUniqueOrThrow: {
+            args: Prisma.ShelfFindUniqueOrThrowArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$ShelfPayload>
+          }
+          findFirst: {
+            args: Prisma.ShelfFindFirstArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$ShelfPayload> | null
+          }
+          findFirstOrThrow: {
+            args: Prisma.ShelfFindFirstOrThrowArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$ShelfPayload>
+          }
+          findMany: {
+            args: Prisma.ShelfFindManyArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$ShelfPayload>[]
+          }
+          create: {
+            args: Prisma.ShelfCreateArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$ShelfPayload>
+          }
+          createMany: {
+            args: Prisma.ShelfCreateManyArgs<ExtArgs>
+            result: BatchPayload
+          }
+          createManyAndReturn: {
+            args: Prisma.ShelfCreateManyAndReturnArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$ShelfPayload>[]
+          }
+          delete: {
+            args: Prisma.ShelfDeleteArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$ShelfPayload>
+          }
+          update: {
+            args: Prisma.ShelfUpdateArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$ShelfPayload>
+          }
+          deleteMany: {
+            args: Prisma.ShelfDeleteManyArgs<ExtArgs>
+            result: BatchPayload
+          }
+          updateMany: {
+            args: Prisma.ShelfUpdateManyArgs<ExtArgs>
+            result: BatchPayload
+          }
+          updateManyAndReturn: {
+            args: Prisma.ShelfUpdateManyAndReturnArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$ShelfPayload>[]
+          }
+          upsert: {
+            args: Prisma.ShelfUpsertArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$ShelfPayload>
+          }
+          aggregate: {
+            args: Prisma.ShelfAggregateArgs<ExtArgs>
+            result: $Utils.Optional<AggregateShelf>
+          }
+          groupBy: {
+            args: Prisma.ShelfGroupByArgs<ExtArgs>
+            result: $Utils.Optional<ShelfGroupByOutputType>[]
+          }
+          count: {
+            args: Prisma.ShelfCountArgs<ExtArgs>
+            result: $Utils.Optional<ShelfCountAggregateOutputType> | number
           }
         }
       }
@@ -967,6 +1057,7 @@ export namespace Prisma {
   export type GlobalOmitConfig = {
     wall?: WallOmit
     library?: LibraryOmit
+    shelf?: ShelfOmit
     volume?: VolumeOmit
   }
 
@@ -1079,11 +1170,11 @@ export namespace Prisma {
    */
 
   export type LibraryCountOutputType = {
-    volumes: number
+    shelves: number
   }
 
   export type LibraryCountOutputTypeSelect<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
-    volumes?: boolean | LibraryCountOutputTypeCountVolumesArgs
+    shelves?: boolean | LibraryCountOutputTypeCountShelvesArgs
   }
 
   // Custom InputTypes
@@ -1100,7 +1191,38 @@ export namespace Prisma {
   /**
    * LibraryCountOutputType without action
    */
-  export type LibraryCountOutputTypeCountVolumesArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+  export type LibraryCountOutputTypeCountShelvesArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    where?: ShelfWhereInput
+  }
+
+
+  /**
+   * Count Type ShelfCountOutputType
+   */
+
+  export type ShelfCountOutputType = {
+    volumes: number
+  }
+
+  export type ShelfCountOutputTypeSelect<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    volumes?: boolean | ShelfCountOutputTypeCountVolumesArgs
+  }
+
+  // Custom InputTypes
+  /**
+   * ShelfCountOutputType without action
+   */
+  export type ShelfCountOutputTypeDefaultArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the ShelfCountOutputType
+     */
+    select?: ShelfCountOutputTypeSelect<ExtArgs> | null
+  }
+
+  /**
+   * ShelfCountOutputType without action
+   */
+  export type ShelfCountOutputTypeCountVolumesArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     where?: VolumeWhereInput
   }
 
@@ -2385,7 +2507,7 @@ export namespace Prisma {
     description?: boolean
     wallId?: boolean
     wall?: boolean | Library$wallArgs<ExtArgs>
-    volumes?: boolean | Library$volumesArgs<ExtArgs>
+    shelves?: boolean | Library$shelvesArgs<ExtArgs>
     _count?: boolean | LibraryCountOutputTypeDefaultArgs<ExtArgs>
   }, ExtArgs["result"]["library"]>
 
@@ -2415,7 +2537,7 @@ export namespace Prisma {
   export type LibraryOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "name" | "description" | "wallId", ExtArgs["result"]["library"]>
   export type LibraryInclude<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     wall?: boolean | Library$wallArgs<ExtArgs>
-    volumes?: boolean | Library$volumesArgs<ExtArgs>
+    shelves?: boolean | Library$shelvesArgs<ExtArgs>
     _count?: boolean | LibraryCountOutputTypeDefaultArgs<ExtArgs>
   }
   export type LibraryIncludeCreateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
@@ -2429,7 +2551,7 @@ export namespace Prisma {
     name: "Library"
     objects: {
       wall: Prisma.$WallPayload<ExtArgs> | null
-      volumes: Prisma.$VolumePayload<ExtArgs>[]
+      shelves: Prisma.$ShelfPayload<ExtArgs>[]
     }
     scalars: $Extensions.GetPayloadResult<{
       id: number
@@ -2831,7 +2953,7 @@ export namespace Prisma {
   export interface Prisma__LibraryClient<T, Null = never, ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs, GlobalOmitOptions = {}> extends Prisma.PrismaPromise<T> {
     readonly [Symbol.toStringTag]: "PrismaPromise"
     wall<T extends Library$wallArgs<ExtArgs> = {}>(args?: Subset<T, Library$wallArgs<ExtArgs>>): Prisma__WallClient<$Result.GetResult<Prisma.$WallPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
-    volumes<T extends Library$volumesArgs<ExtArgs> = {}>(args?: Subset<T, Library$volumesArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$VolumePayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
+    shelves<T extends Library$shelvesArgs<ExtArgs> = {}>(args?: Subset<T, Library$shelvesArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$ShelfPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
     /**
      * Attaches callbacks for the resolution and/or rejection of the Promise.
      * @param onfulfilled The callback to execute when the Promise is resolved.
@@ -3283,27 +3405,27 @@ export namespace Prisma {
   }
 
   /**
-   * Library.volumes
+   * Library.shelves
    */
-  export type Library$volumesArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+  export type Library$shelvesArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     /**
-     * Select specific fields to fetch from the Volume
+     * Select specific fields to fetch from the Shelf
      */
-    select?: VolumeSelect<ExtArgs> | null
+    select?: ShelfSelect<ExtArgs> | null
     /**
-     * Omit specific fields from the Volume
+     * Omit specific fields from the Shelf
      */
-    omit?: VolumeOmit<ExtArgs> | null
+    omit?: ShelfOmit<ExtArgs> | null
     /**
      * Choose, which related nodes to fetch as well
      */
-    include?: VolumeInclude<ExtArgs> | null
-    where?: VolumeWhereInput
-    orderBy?: VolumeOrderByWithRelationInput | VolumeOrderByWithRelationInput[]
-    cursor?: VolumeWhereUniqueInput
+    include?: ShelfInclude<ExtArgs> | null
+    where?: ShelfWhereInput
+    orderBy?: ShelfOrderByWithRelationInput | ShelfOrderByWithRelationInput[]
+    cursor?: ShelfWhereUniqueInput
     take?: number
     skip?: number
-    distinct?: VolumeScalarFieldEnum | VolumeScalarFieldEnum[]
+    distinct?: ShelfScalarFieldEnum | ShelfScalarFieldEnum[]
   }
 
   /**
@@ -3326,6 +3448,1148 @@ export namespace Prisma {
 
 
   /**
+   * Model Shelf
+   */
+
+  export type AggregateShelf = {
+    _count: ShelfCountAggregateOutputType | null
+    _avg: ShelfAvgAggregateOutputType | null
+    _sum: ShelfSumAggregateOutputType | null
+    _min: ShelfMinAggregateOutputType | null
+    _max: ShelfMaxAggregateOutputType | null
+  }
+
+  export type ShelfAvgAggregateOutputType = {
+    id: number | null
+    libraryId: number | null
+  }
+
+  export type ShelfSumAggregateOutputType = {
+    id: number | null
+    libraryId: number | null
+  }
+
+  export type ShelfMinAggregateOutputType = {
+    id: number | null
+    name: string | null
+    description: string | null
+    createdAt: Date | null
+    updatedAt: Date | null
+    libraryId: number | null
+  }
+
+  export type ShelfMaxAggregateOutputType = {
+    id: number | null
+    name: string | null
+    description: string | null
+    createdAt: Date | null
+    updatedAt: Date | null
+    libraryId: number | null
+  }
+
+  export type ShelfCountAggregateOutputType = {
+    id: number
+    name: number
+    description: number
+    createdAt: number
+    updatedAt: number
+    libraryId: number
+    _all: number
+  }
+
+
+  export type ShelfAvgAggregateInputType = {
+    id?: true
+    libraryId?: true
+  }
+
+  export type ShelfSumAggregateInputType = {
+    id?: true
+    libraryId?: true
+  }
+
+  export type ShelfMinAggregateInputType = {
+    id?: true
+    name?: true
+    description?: true
+    createdAt?: true
+    updatedAt?: true
+    libraryId?: true
+  }
+
+  export type ShelfMaxAggregateInputType = {
+    id?: true
+    name?: true
+    description?: true
+    createdAt?: true
+    updatedAt?: true
+    libraryId?: true
+  }
+
+  export type ShelfCountAggregateInputType = {
+    id?: true
+    name?: true
+    description?: true
+    createdAt?: true
+    updatedAt?: true
+    libraryId?: true
+    _all?: true
+  }
+
+  export type ShelfAggregateArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Filter which Shelf to aggregate.
+     */
+    where?: ShelfWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of Shelves to fetch.
+     */
+    orderBy?: ShelfOrderByWithRelationInput | ShelfOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the start position
+     */
+    cursor?: ShelfWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` Shelves from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` Shelves.
+     */
+    skip?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Count returned Shelves
+    **/
+    _count?: true | ShelfCountAggregateInputType
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Select which fields to average
+    **/
+    _avg?: ShelfAvgAggregateInputType
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Select which fields to sum
+    **/
+    _sum?: ShelfSumAggregateInputType
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Select which fields to find the minimum value
+    **/
+    _min?: ShelfMinAggregateInputType
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Select which fields to find the maximum value
+    **/
+    _max?: ShelfMaxAggregateInputType
+  }
+
+  export type GetShelfAggregateType<T extends ShelfAggregateArgs> = {
+        [P in keyof T & keyof AggregateShelf]: P extends '_count' | 'count'
+      ? T[P] extends true
+        ? number
+        : GetScalarType<T[P], AggregateShelf[P]>
+      : GetScalarType<T[P], AggregateShelf[P]>
+  }
+
+
+
+
+  export type ShelfGroupByArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    where?: ShelfWhereInput
+    orderBy?: ShelfOrderByWithAggregationInput | ShelfOrderByWithAggregationInput[]
+    by: ShelfScalarFieldEnum[] | ShelfScalarFieldEnum
+    having?: ShelfScalarWhereWithAggregatesInput
+    take?: number
+    skip?: number
+    _count?: ShelfCountAggregateInputType | true
+    _avg?: ShelfAvgAggregateInputType
+    _sum?: ShelfSumAggregateInputType
+    _min?: ShelfMinAggregateInputType
+    _max?: ShelfMaxAggregateInputType
+  }
+
+  export type ShelfGroupByOutputType = {
+    id: number
+    name: string
+    description: string
+    createdAt: Date
+    updatedAt: Date
+    libraryId: number
+    _count: ShelfCountAggregateOutputType | null
+    _avg: ShelfAvgAggregateOutputType | null
+    _sum: ShelfSumAggregateOutputType | null
+    _min: ShelfMinAggregateOutputType | null
+    _max: ShelfMaxAggregateOutputType | null
+  }
+
+  type GetShelfGroupByPayload<T extends ShelfGroupByArgs> = Prisma.PrismaPromise<
+    Array<
+      PickEnumerable<ShelfGroupByOutputType, T['by']> &
+        {
+          [P in ((keyof T) & (keyof ShelfGroupByOutputType))]: P extends '_count'
+            ? T[P] extends boolean
+              ? number
+              : GetScalarType<T[P], ShelfGroupByOutputType[P]>
+            : GetScalarType<T[P], ShelfGroupByOutputType[P]>
+        }
+      >
+    >
+
+
+  export type ShelfSelect<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
+    id?: boolean
+    name?: boolean
+    description?: boolean
+    createdAt?: boolean
+    updatedAt?: boolean
+    libraryId?: boolean
+    library?: boolean | LibraryDefaultArgs<ExtArgs>
+    volumes?: boolean | Shelf$volumesArgs<ExtArgs>
+    _count?: boolean | ShelfCountOutputTypeDefaultArgs<ExtArgs>
+  }, ExtArgs["result"]["shelf"]>
+
+  export type ShelfSelectCreateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
+    id?: boolean
+    name?: boolean
+    description?: boolean
+    createdAt?: boolean
+    updatedAt?: boolean
+    libraryId?: boolean
+    library?: boolean | LibraryDefaultArgs<ExtArgs>
+  }, ExtArgs["result"]["shelf"]>
+
+  export type ShelfSelectUpdateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
+    id?: boolean
+    name?: boolean
+    description?: boolean
+    createdAt?: boolean
+    updatedAt?: boolean
+    libraryId?: boolean
+    library?: boolean | LibraryDefaultArgs<ExtArgs>
+  }, ExtArgs["result"]["shelf"]>
+
+  export type ShelfSelectScalar = {
+    id?: boolean
+    name?: boolean
+    description?: boolean
+    createdAt?: boolean
+    updatedAt?: boolean
+    libraryId?: boolean
+  }
+
+  export type ShelfOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "name" | "description" | "createdAt" | "updatedAt" | "libraryId", ExtArgs["result"]["shelf"]>
+  export type ShelfInclude<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    library?: boolean | LibraryDefaultArgs<ExtArgs>
+    volumes?: boolean | Shelf$volumesArgs<ExtArgs>
+    _count?: boolean | ShelfCountOutputTypeDefaultArgs<ExtArgs>
+  }
+  export type ShelfIncludeCreateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    library?: boolean | LibraryDefaultArgs<ExtArgs>
+  }
+  export type ShelfIncludeUpdateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    library?: boolean | LibraryDefaultArgs<ExtArgs>
+  }
+
+  export type $ShelfPayload<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    name: "Shelf"
+    objects: {
+      library: Prisma.$LibraryPayload<ExtArgs>
+      volumes: Prisma.$VolumePayload<ExtArgs>[]
+    }
+    scalars: $Extensions.GetPayloadResult<{
+      id: number
+      name: string
+      description: string
+      createdAt: Date
+      updatedAt: Date
+      libraryId: number
+    }, ExtArgs["result"]["shelf"]>
+    composites: {}
+  }
+
+  type ShelfGetPayload<S extends boolean | null | undefined | ShelfDefaultArgs> = $Result.GetResult<Prisma.$ShelfPayload, S>
+
+  type ShelfCountArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> =
+    Omit<ShelfFindManyArgs, 'select' | 'include' | 'distinct' | 'omit'> & {
+      select?: ShelfCountAggregateInputType | true
+    }
+
+  export interface ShelfDelegate<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs, GlobalOmitOptions = {}> {
+    [K: symbol]: { types: Prisma.TypeMap<ExtArgs>['model']['Shelf'], meta: { name: 'Shelf' } }
+    /**
+     * Find zero or one Shelf that matches the filter.
+     * @param {ShelfFindUniqueArgs} args - Arguments to find a Shelf
+     * @example
+     * // Get one Shelf
+     * const shelf = await prisma.shelf.findUnique({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findUnique<T extends ShelfFindUniqueArgs>(args: SelectSubset<T, ShelfFindUniqueArgs<ExtArgs>>): Prisma__ShelfClient<$Result.GetResult<Prisma.$ShelfPayload<ExtArgs>, T, "findUnique", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Find one Shelf that matches the filter or throw an error with `error.code='P2025'`
+     * if no matches were found.
+     * @param {ShelfFindUniqueOrThrowArgs} args - Arguments to find a Shelf
+     * @example
+     * // Get one Shelf
+     * const shelf = await prisma.shelf.findUniqueOrThrow({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findUniqueOrThrow<T extends ShelfFindUniqueOrThrowArgs>(args: SelectSubset<T, ShelfFindUniqueOrThrowArgs<ExtArgs>>): Prisma__ShelfClient<$Result.GetResult<Prisma.$ShelfPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Find the first Shelf that matches the filter.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {ShelfFindFirstArgs} args - Arguments to find a Shelf
+     * @example
+     * // Get one Shelf
+     * const shelf = await prisma.shelf.findFirst({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findFirst<T extends ShelfFindFirstArgs>(args?: SelectSubset<T, ShelfFindFirstArgs<ExtArgs>>): Prisma__ShelfClient<$Result.GetResult<Prisma.$ShelfPayload<ExtArgs>, T, "findFirst", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Find the first Shelf that matches the filter or
+     * throw `PrismaKnownClientError` with `P2025` code if no matches were found.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {ShelfFindFirstOrThrowArgs} args - Arguments to find a Shelf
+     * @example
+     * // Get one Shelf
+     * const shelf = await prisma.shelf.findFirstOrThrow({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findFirstOrThrow<T extends ShelfFindFirstOrThrowArgs>(args?: SelectSubset<T, ShelfFindFirstOrThrowArgs<ExtArgs>>): Prisma__ShelfClient<$Result.GetResult<Prisma.$ShelfPayload<ExtArgs>, T, "findFirstOrThrow", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Find zero or more Shelves that matches the filter.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {ShelfFindManyArgs} args - Arguments to filter and select certain fields only.
+     * @example
+     * // Get all Shelves
+     * const shelves = await prisma.shelf.findMany()
+     * 
+     * // Get first 10 Shelves
+     * const shelves = await prisma.shelf.findMany({ take: 10 })
+     * 
+     * // Only select the `id`
+     * const shelfWithIdOnly = await prisma.shelf.findMany({ select: { id: true } })
+     * 
+     */
+    findMany<T extends ShelfFindManyArgs>(args?: SelectSubset<T, ShelfFindManyArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$ShelfPayload<ExtArgs>, T, "findMany", GlobalOmitOptions>>
+
+    /**
+     * Create a Shelf.
+     * @param {ShelfCreateArgs} args - Arguments to create a Shelf.
+     * @example
+     * // Create one Shelf
+     * const Shelf = await prisma.shelf.create({
+     *   data: {
+     *     // ... data to create a Shelf
+     *   }
+     * })
+     * 
+     */
+    create<T extends ShelfCreateArgs>(args: SelectSubset<T, ShelfCreateArgs<ExtArgs>>): Prisma__ShelfClient<$Result.GetResult<Prisma.$ShelfPayload<ExtArgs>, T, "create", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Create many Shelves.
+     * @param {ShelfCreateManyArgs} args - Arguments to create many Shelves.
+     * @example
+     * // Create many Shelves
+     * const shelf = await prisma.shelf.createMany({
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     *     
+     */
+    createMany<T extends ShelfCreateManyArgs>(args?: SelectSubset<T, ShelfCreateManyArgs<ExtArgs>>): Prisma.PrismaPromise<BatchPayload>
+
+    /**
+     * Create many Shelves and returns the data saved in the database.
+     * @param {ShelfCreateManyAndReturnArgs} args - Arguments to create many Shelves.
+     * @example
+     * // Create many Shelves
+     * const shelf = await prisma.shelf.createManyAndReturn({
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     * 
+     * // Create many Shelves and only return the `id`
+     * const shelfWithIdOnly = await prisma.shelf.createManyAndReturn({
+     *   select: { id: true },
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * 
+     */
+    createManyAndReturn<T extends ShelfCreateManyAndReturnArgs>(args?: SelectSubset<T, ShelfCreateManyAndReturnArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$ShelfPayload<ExtArgs>, T, "createManyAndReturn", GlobalOmitOptions>>
+
+    /**
+     * Delete a Shelf.
+     * @param {ShelfDeleteArgs} args - Arguments to delete one Shelf.
+     * @example
+     * // Delete one Shelf
+     * const Shelf = await prisma.shelf.delete({
+     *   where: {
+     *     // ... filter to delete one Shelf
+     *   }
+     * })
+     * 
+     */
+    delete<T extends ShelfDeleteArgs>(args: SelectSubset<T, ShelfDeleteArgs<ExtArgs>>): Prisma__ShelfClient<$Result.GetResult<Prisma.$ShelfPayload<ExtArgs>, T, "delete", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Update one Shelf.
+     * @param {ShelfUpdateArgs} args - Arguments to update one Shelf.
+     * @example
+     * // Update one Shelf
+     * const shelf = await prisma.shelf.update({
+     *   where: {
+     *     // ... provide filter here
+     *   },
+     *   data: {
+     *     // ... provide data here
+     *   }
+     * })
+     * 
+     */
+    update<T extends ShelfUpdateArgs>(args: SelectSubset<T, ShelfUpdateArgs<ExtArgs>>): Prisma__ShelfClient<$Result.GetResult<Prisma.$ShelfPayload<ExtArgs>, T, "update", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Delete zero or more Shelves.
+     * @param {ShelfDeleteManyArgs} args - Arguments to filter Shelves to delete.
+     * @example
+     * // Delete a few Shelves
+     * const { count } = await prisma.shelf.deleteMany({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     * 
+     */
+    deleteMany<T extends ShelfDeleteManyArgs>(args?: SelectSubset<T, ShelfDeleteManyArgs<ExtArgs>>): Prisma.PrismaPromise<BatchPayload>
+
+    /**
+     * Update zero or more Shelves.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {ShelfUpdateManyArgs} args - Arguments to update one or more rows.
+     * @example
+     * // Update many Shelves
+     * const shelf = await prisma.shelf.updateMany({
+     *   where: {
+     *     // ... provide filter here
+     *   },
+     *   data: {
+     *     // ... provide data here
+     *   }
+     * })
+     * 
+     */
+    updateMany<T extends ShelfUpdateManyArgs>(args: SelectSubset<T, ShelfUpdateManyArgs<ExtArgs>>): Prisma.PrismaPromise<BatchPayload>
+
+    /**
+     * Update zero or more Shelves and returns the data updated in the database.
+     * @param {ShelfUpdateManyAndReturnArgs} args - Arguments to update many Shelves.
+     * @example
+     * // Update many Shelves
+     * const shelf = await prisma.shelf.updateManyAndReturn({
+     *   where: {
+     *     // ... provide filter here
+     *   },
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     * 
+     * // Update zero or more Shelves and only return the `id`
+     * const shelfWithIdOnly = await prisma.shelf.updateManyAndReturn({
+     *   select: { id: true },
+     *   where: {
+     *     // ... provide filter here
+     *   },
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * 
+     */
+    updateManyAndReturn<T extends ShelfUpdateManyAndReturnArgs>(args: SelectSubset<T, ShelfUpdateManyAndReturnArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$ShelfPayload<ExtArgs>, T, "updateManyAndReturn", GlobalOmitOptions>>
+
+    /**
+     * Create or update one Shelf.
+     * @param {ShelfUpsertArgs} args - Arguments to update or create a Shelf.
+     * @example
+     * // Update or create a Shelf
+     * const shelf = await prisma.shelf.upsert({
+     *   create: {
+     *     // ... data to create a Shelf
+     *   },
+     *   update: {
+     *     // ... in case it already exists, update
+     *   },
+     *   where: {
+     *     // ... the filter for the Shelf we want to update
+     *   }
+     * })
+     */
+    upsert<T extends ShelfUpsertArgs>(args: SelectSubset<T, ShelfUpsertArgs<ExtArgs>>): Prisma__ShelfClient<$Result.GetResult<Prisma.$ShelfPayload<ExtArgs>, T, "upsert", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+
+    /**
+     * Count the number of Shelves.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {ShelfCountArgs} args - Arguments to filter Shelves to count.
+     * @example
+     * // Count the number of Shelves
+     * const count = await prisma.shelf.count({
+     *   where: {
+     *     // ... the filter for the Shelves we want to count
+     *   }
+     * })
+    **/
+    count<T extends ShelfCountArgs>(
+      args?: Subset<T, ShelfCountArgs>,
+    ): Prisma.PrismaPromise<
+      T extends $Utils.Record<'select', any>
+        ? T['select'] extends true
+          ? number
+          : GetScalarType<T['select'], ShelfCountAggregateOutputType>
+        : number
+    >
+
+    /**
+     * Allows you to perform aggregations operations on a Shelf.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {ShelfAggregateArgs} args - Select which aggregations you would like to apply and on what fields.
+     * @example
+     * // Ordered by age ascending
+     * // Where email contains prisma.io
+     * // Limited to the 10 users
+     * const aggregations = await prisma.user.aggregate({
+     *   _avg: {
+     *     age: true,
+     *   },
+     *   where: {
+     *     email: {
+     *       contains: "prisma.io",
+     *     },
+     *   },
+     *   orderBy: {
+     *     age: "asc",
+     *   },
+     *   take: 10,
+     * })
+    **/
+    aggregate<T extends ShelfAggregateArgs>(args: Subset<T, ShelfAggregateArgs>): Prisma.PrismaPromise<GetShelfAggregateType<T>>
+
+    /**
+     * Group by Shelf.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {ShelfGroupByArgs} args - Group by arguments.
+     * @example
+     * // Group by city, order by createdAt, get count
+     * const result = await prisma.user.groupBy({
+     *   by: ['city', 'createdAt'],
+     *   orderBy: {
+     *     createdAt: true
+     *   },
+     *   _count: {
+     *     _all: true
+     *   },
+     * })
+     * 
+    **/
+    groupBy<
+      T extends ShelfGroupByArgs,
+      HasSelectOrTake extends Or<
+        Extends<'skip', Keys<T>>,
+        Extends<'take', Keys<T>>
+      >,
+      OrderByArg extends True extends HasSelectOrTake
+        ? { orderBy: ShelfGroupByArgs['orderBy'] }
+        : { orderBy?: ShelfGroupByArgs['orderBy'] },
+      OrderFields extends ExcludeUnderscoreKeys<Keys<MaybeTupleToUnion<T['orderBy']>>>,
+      ByFields extends MaybeTupleToUnion<T['by']>,
+      ByValid extends Has<ByFields, OrderFields>,
+      HavingFields extends GetHavingFields<T['having']>,
+      HavingValid extends Has<ByFields, HavingFields>,
+      ByEmpty extends T['by'] extends never[] ? True : False,
+      InputErrors extends ByEmpty extends True
+      ? `Error: "by" must not be empty.`
+      : HavingValid extends False
+      ? {
+          [P in HavingFields]: P extends ByFields
+            ? never
+            : P extends string
+            ? `Error: Field "${P}" used in "having" needs to be provided in "by".`
+            : [
+                Error,
+                'Field ',
+                P,
+                ` in "having" needs to be provided in "by"`,
+              ]
+        }[HavingFields]
+      : 'take' extends Keys<T>
+      ? 'orderBy' extends Keys<T>
+        ? ByValid extends True
+          ? {}
+          : {
+              [P in OrderFields]: P extends ByFields
+                ? never
+                : `Error: Field "${P}" in "orderBy" needs to be provided in "by"`
+            }[OrderFields]
+        : 'Error: If you provide "take", you also need to provide "orderBy"'
+      : 'skip' extends Keys<T>
+      ? 'orderBy' extends Keys<T>
+        ? ByValid extends True
+          ? {}
+          : {
+              [P in OrderFields]: P extends ByFields
+                ? never
+                : `Error: Field "${P}" in "orderBy" needs to be provided in "by"`
+            }[OrderFields]
+        : 'Error: If you provide "skip", you also need to provide "orderBy"'
+      : ByValid extends True
+      ? {}
+      : {
+          [P in OrderFields]: P extends ByFields
+            ? never
+            : `Error: Field "${P}" in "orderBy" needs to be provided in "by"`
+        }[OrderFields]
+    >(args: SubsetIntersection<T, ShelfGroupByArgs, OrderByArg> & InputErrors): {} extends InputErrors ? GetShelfGroupByPayload<T> : Prisma.PrismaPromise<InputErrors>
+  /**
+   * Fields of the Shelf model
+   */
+  readonly fields: ShelfFieldRefs;
+  }
+
+  /**
+   * The delegate class that acts as a "Promise-like" for Shelf.
+   * Why is this prefixed with `Prisma__`?
+   * Because we want to prevent naming conflicts as mentioned in
+   * https://github.com/prisma/prisma-client-js/issues/707
+   */
+  export interface Prisma__ShelfClient<T, Null = never, ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs, GlobalOmitOptions = {}> extends Prisma.PrismaPromise<T> {
+    readonly [Symbol.toStringTag]: "PrismaPromise"
+    library<T extends LibraryDefaultArgs<ExtArgs> = {}>(args?: Subset<T, LibraryDefaultArgs<ExtArgs>>): Prisma__LibraryClient<$Result.GetResult<Prisma.$LibraryPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | Null, Null, ExtArgs, GlobalOmitOptions>
+    volumes<T extends Shelf$volumesArgs<ExtArgs> = {}>(args?: Subset<T, Shelf$volumesArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$VolumePayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
+    /**
+     * Attaches callbacks for the resolution and/or rejection of the Promise.
+     * @param onfulfilled The callback to execute when the Promise is resolved.
+     * @param onrejected The callback to execute when the Promise is rejected.
+     * @returns A Promise for the completion of which ever callback is executed.
+     */
+    then<TResult1 = T, TResult2 = never>(onfulfilled?: ((value: T) => TResult1 | PromiseLike<TResult1>) | undefined | null, onrejected?: ((reason: any) => TResult2 | PromiseLike<TResult2>) | undefined | null): $Utils.JsPromise<TResult1 | TResult2>
+    /**
+     * Attaches a callback for only the rejection of the Promise.
+     * @param onrejected The callback to execute when the Promise is rejected.
+     * @returns A Promise for the completion of the callback.
+     */
+    catch<TResult = never>(onrejected?: ((reason: any) => TResult | PromiseLike<TResult>) | undefined | null): $Utils.JsPromise<T | TResult>
+    /**
+     * Attaches a callback that is invoked when the Promise is settled (fulfilled or rejected). The
+     * resolved value cannot be modified from the callback.
+     * @param onfinally The callback to execute when the Promise is settled (fulfilled or rejected).
+     * @returns A Promise for the completion of the callback.
+     */
+    finally(onfinally?: (() => void) | undefined | null): $Utils.JsPromise<T>
+  }
+
+
+
+
+  /**
+   * Fields of the Shelf model
+   */
+  interface ShelfFieldRefs {
+    readonly id: FieldRef<"Shelf", 'Int'>
+    readonly name: FieldRef<"Shelf", 'String'>
+    readonly description: FieldRef<"Shelf", 'String'>
+    readonly createdAt: FieldRef<"Shelf", 'DateTime'>
+    readonly updatedAt: FieldRef<"Shelf", 'DateTime'>
+    readonly libraryId: FieldRef<"Shelf", 'Int'>
+  }
+    
+
+  // Custom InputTypes
+  /**
+   * Shelf findUnique
+   */
+  export type ShelfFindUniqueArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the Shelf
+     */
+    select?: ShelfSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the Shelf
+     */
+    omit?: ShelfOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: ShelfInclude<ExtArgs> | null
+    /**
+     * Filter, which Shelf to fetch.
+     */
+    where: ShelfWhereUniqueInput
+  }
+
+  /**
+   * Shelf findUniqueOrThrow
+   */
+  export type ShelfFindUniqueOrThrowArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the Shelf
+     */
+    select?: ShelfSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the Shelf
+     */
+    omit?: ShelfOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: ShelfInclude<ExtArgs> | null
+    /**
+     * Filter, which Shelf to fetch.
+     */
+    where: ShelfWhereUniqueInput
+  }
+
+  /**
+   * Shelf findFirst
+   */
+  export type ShelfFindFirstArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the Shelf
+     */
+    select?: ShelfSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the Shelf
+     */
+    omit?: ShelfOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: ShelfInclude<ExtArgs> | null
+    /**
+     * Filter, which Shelf to fetch.
+     */
+    where?: ShelfWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of Shelves to fetch.
+     */
+    orderBy?: ShelfOrderByWithRelationInput | ShelfOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the position for searching for Shelves.
+     */
+    cursor?: ShelfWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` Shelves from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` Shelves.
+     */
+    skip?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/distinct Distinct Docs}
+     * 
+     * Filter by unique combinations of Shelves.
+     */
+    distinct?: ShelfScalarFieldEnum | ShelfScalarFieldEnum[]
+  }
+
+  /**
+   * Shelf findFirstOrThrow
+   */
+  export type ShelfFindFirstOrThrowArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the Shelf
+     */
+    select?: ShelfSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the Shelf
+     */
+    omit?: ShelfOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: ShelfInclude<ExtArgs> | null
+    /**
+     * Filter, which Shelf to fetch.
+     */
+    where?: ShelfWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of Shelves to fetch.
+     */
+    orderBy?: ShelfOrderByWithRelationInput | ShelfOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the position for searching for Shelves.
+     */
+    cursor?: ShelfWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` Shelves from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` Shelves.
+     */
+    skip?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/distinct Distinct Docs}
+     * 
+     * Filter by unique combinations of Shelves.
+     */
+    distinct?: ShelfScalarFieldEnum | ShelfScalarFieldEnum[]
+  }
+
+  /**
+   * Shelf findMany
+   */
+  export type ShelfFindManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the Shelf
+     */
+    select?: ShelfSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the Shelf
+     */
+    omit?: ShelfOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: ShelfInclude<ExtArgs> | null
+    /**
+     * Filter, which Shelves to fetch.
+     */
+    where?: ShelfWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of Shelves to fetch.
+     */
+    orderBy?: ShelfOrderByWithRelationInput | ShelfOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the position for listing Shelves.
+     */
+    cursor?: ShelfWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` Shelves from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` Shelves.
+     */
+    skip?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/distinct Distinct Docs}
+     * 
+     * Filter by unique combinations of Shelves.
+     */
+    distinct?: ShelfScalarFieldEnum | ShelfScalarFieldEnum[]
+  }
+
+  /**
+   * Shelf create
+   */
+  export type ShelfCreateArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the Shelf
+     */
+    select?: ShelfSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the Shelf
+     */
+    omit?: ShelfOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: ShelfInclude<ExtArgs> | null
+    /**
+     * The data needed to create a Shelf.
+     */
+    data: XOR<ShelfCreateInput, ShelfUncheckedCreateInput>
+  }
+
+  /**
+   * Shelf createMany
+   */
+  export type ShelfCreateManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * The data used to create many Shelves.
+     */
+    data: ShelfCreateManyInput | ShelfCreateManyInput[]
+  }
+
+  /**
+   * Shelf createManyAndReturn
+   */
+  export type ShelfCreateManyAndReturnArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the Shelf
+     */
+    select?: ShelfSelectCreateManyAndReturn<ExtArgs> | null
+    /**
+     * Omit specific fields from the Shelf
+     */
+    omit?: ShelfOmit<ExtArgs> | null
+    /**
+     * The data used to create many Shelves.
+     */
+    data: ShelfCreateManyInput | ShelfCreateManyInput[]
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: ShelfIncludeCreateManyAndReturn<ExtArgs> | null
+  }
+
+  /**
+   * Shelf update
+   */
+  export type ShelfUpdateArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the Shelf
+     */
+    select?: ShelfSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the Shelf
+     */
+    omit?: ShelfOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: ShelfInclude<ExtArgs> | null
+    /**
+     * The data needed to update a Shelf.
+     */
+    data: XOR<ShelfUpdateInput, ShelfUncheckedUpdateInput>
+    /**
+     * Choose, which Shelf to update.
+     */
+    where: ShelfWhereUniqueInput
+  }
+
+  /**
+   * Shelf updateMany
+   */
+  export type ShelfUpdateManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * The data used to update Shelves.
+     */
+    data: XOR<ShelfUpdateManyMutationInput, ShelfUncheckedUpdateManyInput>
+    /**
+     * Filter which Shelves to update
+     */
+    where?: ShelfWhereInput
+    /**
+     * Limit how many Shelves to update.
+     */
+    limit?: number
+  }
+
+  /**
+   * Shelf updateManyAndReturn
+   */
+  export type ShelfUpdateManyAndReturnArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the Shelf
+     */
+    select?: ShelfSelectUpdateManyAndReturn<ExtArgs> | null
+    /**
+     * Omit specific fields from the Shelf
+     */
+    omit?: ShelfOmit<ExtArgs> | null
+    /**
+     * The data used to update Shelves.
+     */
+    data: XOR<ShelfUpdateManyMutationInput, ShelfUncheckedUpdateManyInput>
+    /**
+     * Filter which Shelves to update
+     */
+    where?: ShelfWhereInput
+    /**
+     * Limit how many Shelves to update.
+     */
+    limit?: number
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: ShelfIncludeUpdateManyAndReturn<ExtArgs> | null
+  }
+
+  /**
+   * Shelf upsert
+   */
+  export type ShelfUpsertArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the Shelf
+     */
+    select?: ShelfSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the Shelf
+     */
+    omit?: ShelfOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: ShelfInclude<ExtArgs> | null
+    /**
+     * The filter to search for the Shelf to update in case it exists.
+     */
+    where: ShelfWhereUniqueInput
+    /**
+     * In case the Shelf found by the `where` argument doesn't exist, create a new Shelf with this data.
+     */
+    create: XOR<ShelfCreateInput, ShelfUncheckedCreateInput>
+    /**
+     * In case the Shelf was found with the provided `where` argument, update it with this data.
+     */
+    update: XOR<ShelfUpdateInput, ShelfUncheckedUpdateInput>
+  }
+
+  /**
+   * Shelf delete
+   */
+  export type ShelfDeleteArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the Shelf
+     */
+    select?: ShelfSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the Shelf
+     */
+    omit?: ShelfOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: ShelfInclude<ExtArgs> | null
+    /**
+     * Filter which Shelf to delete.
+     */
+    where: ShelfWhereUniqueInput
+  }
+
+  /**
+   * Shelf deleteMany
+   */
+  export type ShelfDeleteManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Filter which Shelves to delete
+     */
+    where?: ShelfWhereInput
+    /**
+     * Limit how many Shelves to delete.
+     */
+    limit?: number
+  }
+
+  /**
+   * Shelf.volumes
+   */
+  export type Shelf$volumesArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the Volume
+     */
+    select?: VolumeSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the Volume
+     */
+    omit?: VolumeOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: VolumeInclude<ExtArgs> | null
+    where?: VolumeWhereInput
+    orderBy?: VolumeOrderByWithRelationInput | VolumeOrderByWithRelationInput[]
+    cursor?: VolumeWhereUniqueInput
+    take?: number
+    skip?: number
+    distinct?: VolumeScalarFieldEnum | VolumeScalarFieldEnum[]
+  }
+
+  /**
+   * Shelf without action
+   */
+  export type ShelfDefaultArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the Shelf
+     */
+    select?: ShelfSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the Shelf
+     */
+    omit?: ShelfOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: ShelfInclude<ExtArgs> | null
+  }
+
+
+  /**
    * Model Volume
    */
 
@@ -3339,66 +4603,66 @@ export namespace Prisma {
 
   export type VolumeAvgAggregateOutputType = {
     id: number | null
-    libraryId: number | null
+    shelfId: number | null
   }
 
   export type VolumeSumAggregateOutputType = {
     id: number | null
-    libraryId: number | null
+    shelfId: number | null
   }
 
   export type VolumeMinAggregateOutputType = {
     id: number | null
     title: string | null
     content: string | null
-    libraryId: number | null
+    shelfId: number | null
   }
 
   export type VolumeMaxAggregateOutputType = {
     id: number | null
     title: string | null
     content: string | null
-    libraryId: number | null
+    shelfId: number | null
   }
 
   export type VolumeCountAggregateOutputType = {
     id: number
     title: number
     content: number
-    libraryId: number
+    shelfId: number
     _all: number
   }
 
 
   export type VolumeAvgAggregateInputType = {
     id?: true
-    libraryId?: true
+    shelfId?: true
   }
 
   export type VolumeSumAggregateInputType = {
     id?: true
-    libraryId?: true
+    shelfId?: true
   }
 
   export type VolumeMinAggregateInputType = {
     id?: true
     title?: true
     content?: true
-    libraryId?: true
+    shelfId?: true
   }
 
   export type VolumeMaxAggregateInputType = {
     id?: true
     title?: true
     content?: true
-    libraryId?: true
+    shelfId?: true
   }
 
   export type VolumeCountAggregateInputType = {
     id?: true
     title?: true
     content?: true
-    libraryId?: true
+    shelfId?: true
     _all?: true
   }
 
@@ -3492,7 +4756,7 @@ export namespace Prisma {
     id: number
     title: string
     content: string
-    libraryId: number
+    shelfId: number
     _count: VolumeCountAggregateOutputType | null
     _avg: VolumeAvgAggregateOutputType | null
     _sum: VolumeSumAggregateOutputType | null
@@ -3518,54 +4782,54 @@ export namespace Prisma {
     id?: boolean
     title?: boolean
     content?: boolean
-    libraryId?: boolean
-    library?: boolean | LibraryDefaultArgs<ExtArgs>
+    shelfId?: boolean
+    shelf?: boolean | ShelfDefaultArgs<ExtArgs>
   }, ExtArgs["result"]["volume"]>
 
   export type VolumeSelectCreateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
     id?: boolean
     title?: boolean
     content?: boolean
-    libraryId?: boolean
-    library?: boolean | LibraryDefaultArgs<ExtArgs>
+    shelfId?: boolean
+    shelf?: boolean | ShelfDefaultArgs<ExtArgs>
   }, ExtArgs["result"]["volume"]>
 
   export type VolumeSelectUpdateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
     id?: boolean
     title?: boolean
     content?: boolean
-    libraryId?: boolean
-    library?: boolean | LibraryDefaultArgs<ExtArgs>
+    shelfId?: boolean
+    shelf?: boolean | ShelfDefaultArgs<ExtArgs>
   }, ExtArgs["result"]["volume"]>
 
   export type VolumeSelectScalar = {
     id?: boolean
     title?: boolean
     content?: boolean
-    libraryId?: boolean
+    shelfId?: boolean
   }
 
-  export type VolumeOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "title" | "content" | "libraryId", ExtArgs["result"]["volume"]>
+  export type VolumeOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "title" | "content" | "shelfId", ExtArgs["result"]["volume"]>
   export type VolumeInclude<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
-    library?: boolean | LibraryDefaultArgs<ExtArgs>
+    shelf?: boolean | ShelfDefaultArgs<ExtArgs>
   }
   export type VolumeIncludeCreateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
-    library?: boolean | LibraryDefaultArgs<ExtArgs>
+    shelf?: boolean | ShelfDefaultArgs<ExtArgs>
   }
   export type VolumeIncludeUpdateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
-    library?: boolean | LibraryDefaultArgs<ExtArgs>
+    shelf?: boolean | ShelfDefaultArgs<ExtArgs>
   }
 
   export type $VolumePayload<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     name: "Volume"
     objects: {
-      library: Prisma.$LibraryPayload<ExtArgs>
+      shelf: Prisma.$ShelfPayload<ExtArgs>
     }
     scalars: $Extensions.GetPayloadResult<{
       id: number
       title: string
       content: string
-      libraryId: number
+      shelfId: number
     }, ExtArgs["result"]["volume"]>
     composites: {}
   }
@@ -3960,7 +5224,7 @@ export namespace Prisma {
    */
   export interface Prisma__VolumeClient<T, Null = never, ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs, GlobalOmitOptions = {}> extends Prisma.PrismaPromise<T> {
     readonly [Symbol.toStringTag]: "PrismaPromise"
-    library<T extends LibraryDefaultArgs<ExtArgs> = {}>(args?: Subset<T, LibraryDefaultArgs<ExtArgs>>): Prisma__LibraryClient<$Result.GetResult<Prisma.$LibraryPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | Null, Null, ExtArgs, GlobalOmitOptions>
+    shelf<T extends ShelfDefaultArgs<ExtArgs> = {}>(args?: Subset<T, ShelfDefaultArgs<ExtArgs>>): Prisma__ShelfClient<$Result.GetResult<Prisma.$ShelfPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | Null, Null, ExtArgs, GlobalOmitOptions>
     /**
      * Attaches callbacks for the resolution and/or rejection of the Promise.
      * @param onfulfilled The callback to execute when the Promise is resolved.
@@ -3993,7 +5257,7 @@ export namespace Prisma {
     readonly id: FieldRef<"Volume", 'Int'>
     readonly title: FieldRef<"Volume", 'String'>
     readonly content: FieldRef<"Volume", 'String'>
-    readonly libraryId: FieldRef<"Volume", 'Int'>
+    readonly shelfId: FieldRef<"Volume", 'Int'>
   }
     
 
@@ -4441,11 +5705,23 @@ export namespace Prisma {
   export type LibraryScalarFieldEnum = (typeof LibraryScalarFieldEnum)[keyof typeof LibraryScalarFieldEnum]
 
 
+  export const ShelfScalarFieldEnum: {
+    id: 'id',
+    name: 'name',
+    description: 'description',
+    createdAt: 'createdAt',
+    updatedAt: 'updatedAt',
+    libraryId: 'libraryId'
+  };
+
+  export type ShelfScalarFieldEnum = (typeof ShelfScalarFieldEnum)[keyof typeof ShelfScalarFieldEnum]
+
+
   export const VolumeScalarFieldEnum: {
     id: 'id',
     title: 'title',
     content: 'content',
-    libraryId: 'libraryId'
+    shelfId: 'shelfId'
   };
 
   export type VolumeScalarFieldEnum = (typeof VolumeScalarFieldEnum)[keyof typeof VolumeScalarFieldEnum]
@@ -4483,6 +5759,13 @@ export namespace Prisma {
    * Reference to a field of type 'String'
    */
   export type StringFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'String'>
+    
+
+
+  /**
+   * Reference to a field of type 'DateTime'
+   */
+  export type DateTimeFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'DateTime'>
     
 
 
@@ -4552,7 +5835,7 @@ export namespace Prisma {
     description?: StringFilter<"Library"> | string
     wallId?: IntNullableFilter<"Library"> | number | null
     wall?: XOR<WallNullableScalarRelationFilter, WallWhereInput> | null
-    volumes?: VolumeListRelationFilter
+    shelves?: ShelfListRelationFilter
   }
 
   export type LibraryOrderByWithRelationInput = {
@@ -4561,7 +5844,7 @@ export namespace Prisma {
     description?: SortOrder
     wallId?: SortOrderInput | SortOrder
     wall?: WallOrderByWithRelationInput
-    volumes?: VolumeOrderByRelationAggregateInput
+    shelves?: ShelfOrderByRelationAggregateInput
   }
 
   export type LibraryWhereUniqueInput = Prisma.AtLeast<{
@@ -4573,7 +5856,7 @@ export namespace Prisma {
     description?: StringFilter<"Library"> | string
     wallId?: IntNullableFilter<"Library"> | number | null
     wall?: XOR<WallNullableScalarRelationFilter, WallWhereInput> | null
-    volumes?: VolumeListRelationFilter
+    shelves?: ShelfListRelationFilter
   }, "id">
 
   export type LibraryOrderByWithAggregationInput = {
@@ -4598,6 +5881,71 @@ export namespace Prisma {
     wallId?: IntNullableWithAggregatesFilter<"Library"> | number | null
   }
 
+  export type ShelfWhereInput = {
+    AND?: ShelfWhereInput | ShelfWhereInput[]
+    OR?: ShelfWhereInput[]
+    NOT?: ShelfWhereInput | ShelfWhereInput[]
+    id?: IntFilter<"Shelf"> | number
+    name?: StringFilter<"Shelf"> | string
+    description?: StringFilter<"Shelf"> | string
+    createdAt?: DateTimeFilter<"Shelf"> | Date | string
+    updatedAt?: DateTimeFilter<"Shelf"> | Date | string
+    libraryId?: IntFilter<"Shelf"> | number
+    library?: XOR<LibraryScalarRelationFilter, LibraryWhereInput>
+    volumes?: VolumeListRelationFilter
+  }
+
+  export type ShelfOrderByWithRelationInput = {
+    id?: SortOrder
+    name?: SortOrder
+    description?: SortOrder
+    createdAt?: SortOrder
+    updatedAt?: SortOrder
+    libraryId?: SortOrder
+    library?: LibraryOrderByWithRelationInput
+    volumes?: VolumeOrderByRelationAggregateInput
+  }
+
+  export type ShelfWhereUniqueInput = Prisma.AtLeast<{
+    id?: number
+    AND?: ShelfWhereInput | ShelfWhereInput[]
+    OR?: ShelfWhereInput[]
+    NOT?: ShelfWhereInput | ShelfWhereInput[]
+    name?: StringFilter<"Shelf"> | string
+    description?: StringFilter<"Shelf"> | string
+    createdAt?: DateTimeFilter<"Shelf"> | Date | string
+    updatedAt?: DateTimeFilter<"Shelf"> | Date | string
+    libraryId?: IntFilter<"Shelf"> | number
+    library?: XOR<LibraryScalarRelationFilter, LibraryWhereInput>
+    volumes?: VolumeListRelationFilter
+  }, "id">
+
+  export type ShelfOrderByWithAggregationInput = {
+    id?: SortOrder
+    name?: SortOrder
+    description?: SortOrder
+    createdAt?: SortOrder
+    updatedAt?: SortOrder
+    libraryId?: SortOrder
+    _count?: ShelfCountOrderByAggregateInput
+    _avg?: ShelfAvgOrderByAggregateInput
+    _max?: ShelfMaxOrderByAggregateInput
+    _min?: ShelfMinOrderByAggregateInput
+    _sum?: ShelfSumOrderByAggregateInput
+  }
+
+  export type ShelfScalarWhereWithAggregatesInput = {
+    AND?: ShelfScalarWhereWithAggregatesInput | ShelfScalarWhereWithAggregatesInput[]
+    OR?: ShelfScalarWhereWithAggregatesInput[]
+    NOT?: ShelfScalarWhereWithAggregatesInput | ShelfScalarWhereWithAggregatesInput[]
+    id?: IntWithAggregatesFilter<"Shelf"> | number
+    name?: StringWithAggregatesFilter<"Shelf"> | string
+    description?: StringWithAggregatesFilter<"Shelf"> | string
+    createdAt?: DateTimeWithAggregatesFilter<"Shelf"> | Date | string
+    updatedAt?: DateTimeWithAggregatesFilter<"Shelf"> | Date | string
+    libraryId?: IntWithAggregatesFilter<"Shelf"> | number
+  }
+
   export type VolumeWhereInput = {
     AND?: VolumeWhereInput | VolumeWhereInput[]
     OR?: VolumeWhereInput[]
@@ -4605,16 +5953,16 @@ export namespace Prisma {
     id?: IntFilter<"Volume"> | number
     title?: StringFilter<"Volume"> | string
     content?: StringFilter<"Volume"> | string
-    libraryId?: IntFilter<"Volume"> | number
-    library?: XOR<LibraryScalarRelationFilter, LibraryWhereInput>
+    shelfId?: IntFilter<"Volume"> | number
+    shelf?: XOR<ShelfScalarRelationFilter, ShelfWhereInput>
   }
 
   export type VolumeOrderByWithRelationInput = {
     id?: SortOrder
     title?: SortOrder
     content?: SortOrder
-    libraryId?: SortOrder
-    library?: LibraryOrderByWithRelationInput
+    shelfId?: SortOrder
+    shelf?: ShelfOrderByWithRelationInput
   }
 
   export type VolumeWhereUniqueInput = Prisma.AtLeast<{
@@ -4624,15 +5972,15 @@ export namespace Prisma {
     NOT?: VolumeWhereInput | VolumeWhereInput[]
     title?: StringFilter<"Volume"> | string
     content?: StringFilter<"Volume"> | string
-    libraryId?: IntFilter<"Volume"> | number
-    library?: XOR<LibraryScalarRelationFilter, LibraryWhereInput>
+    shelfId?: IntFilter<"Volume"> | number
+    shelf?: XOR<ShelfScalarRelationFilter, ShelfWhereInput>
   }, "id">
 
   export type VolumeOrderByWithAggregationInput = {
     id?: SortOrder
     title?: SortOrder
     content?: SortOrder
-    libraryId?: SortOrder
+    shelfId?: SortOrder
     _count?: VolumeCountOrderByAggregateInput
     _avg?: VolumeAvgOrderByAggregateInput
     _max?: VolumeMaxOrderByAggregateInput
@@ -4647,7 +5995,7 @@ export namespace Prisma {
     id?: IntWithAggregatesFilter<"Volume"> | number
     title?: StringWithAggregatesFilter<"Volume"> | string
     content?: StringWithAggregatesFilter<"Volume"> | string
-    libraryId?: IntWithAggregatesFilter<"Volume"> | number
+    shelfId?: IntWithAggregatesFilter<"Volume"> | number
   }
 
   export type WallCreateInput = {
@@ -4697,7 +6045,7 @@ export namespace Prisma {
     name: string
     description: string
     wall?: WallCreateNestedOneWithoutLibrariesInput
-    volumes?: VolumeCreateNestedManyWithoutLibraryInput
+    shelves?: ShelfCreateNestedManyWithoutLibraryInput
   }
 
   export type LibraryUncheckedCreateInput = {
@@ -4705,14 +6053,14 @@ export namespace Prisma {
     name: string
     description: string
     wallId?: number | null
-    volumes?: VolumeUncheckedCreateNestedManyWithoutLibraryInput
+    shelves?: ShelfUncheckedCreateNestedManyWithoutLibraryInput
   }
 
   export type LibraryUpdateInput = {
     name?: StringFieldUpdateOperationsInput | string
     description?: StringFieldUpdateOperationsInput | string
     wall?: WallUpdateOneWithoutLibrariesNestedInput
-    volumes?: VolumeUpdateManyWithoutLibraryNestedInput
+    shelves?: ShelfUpdateManyWithoutLibraryNestedInput
   }
 
   export type LibraryUncheckedUpdateInput = {
@@ -4720,7 +6068,7 @@ export namespace Prisma {
     name?: StringFieldUpdateOperationsInput | string
     description?: StringFieldUpdateOperationsInput | string
     wallId?: NullableIntFieldUpdateOperationsInput | number | null
-    volumes?: VolumeUncheckedUpdateManyWithoutLibraryNestedInput
+    shelves?: ShelfUncheckedUpdateManyWithoutLibraryNestedInput
   }
 
   export type LibraryCreateManyInput = {
@@ -4742,37 +6090,100 @@ export namespace Prisma {
     wallId?: NullableIntFieldUpdateOperationsInput | number | null
   }
 
+  export type ShelfCreateInput = {
+    name: string
+    description: string
+    createdAt?: Date | string
+    updatedAt?: Date | string
+    library: LibraryCreateNestedOneWithoutShelvesInput
+    volumes?: VolumeCreateNestedManyWithoutShelfInput
+  }
+
+  export type ShelfUncheckedCreateInput = {
+    id?: number
+    name: string
+    description: string
+    createdAt?: Date | string
+    updatedAt?: Date | string
+    libraryId: number
+    volumes?: VolumeUncheckedCreateNestedManyWithoutShelfInput
+  }
+
+  export type ShelfUpdateInput = {
+    name?: StringFieldUpdateOperationsInput | string
+    description?: StringFieldUpdateOperationsInput | string
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    library?: LibraryUpdateOneRequiredWithoutShelvesNestedInput
+    volumes?: VolumeUpdateManyWithoutShelfNestedInput
+  }
+
+  export type ShelfUncheckedUpdateInput = {
+    id?: IntFieldUpdateOperationsInput | number
+    name?: StringFieldUpdateOperationsInput | string
+    description?: StringFieldUpdateOperationsInput | string
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    libraryId?: IntFieldUpdateOperationsInput | number
+    volumes?: VolumeUncheckedUpdateManyWithoutShelfNestedInput
+  }
+
+  export type ShelfCreateManyInput = {
+    id?: number
+    name: string
+    description: string
+    createdAt?: Date | string
+    updatedAt?: Date | string
+    libraryId: number
+  }
+
+  export type ShelfUpdateManyMutationInput = {
+    name?: StringFieldUpdateOperationsInput | string
+    description?: StringFieldUpdateOperationsInput | string
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
+  export type ShelfUncheckedUpdateManyInput = {
+    id?: IntFieldUpdateOperationsInput | number
+    name?: StringFieldUpdateOperationsInput | string
+    description?: StringFieldUpdateOperationsInput | string
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    libraryId?: IntFieldUpdateOperationsInput | number
+  }
+
   export type VolumeCreateInput = {
     title: string
     content?: string
-    library: LibraryCreateNestedOneWithoutVolumesInput
+    shelf: ShelfCreateNestedOneWithoutVolumesInput
   }
 
   export type VolumeUncheckedCreateInput = {
     id?: number
     title: string
     content?: string
-    libraryId: number
+    shelfId: number
   }
 
   export type VolumeUpdateInput = {
     title?: StringFieldUpdateOperationsInput | string
     content?: StringFieldUpdateOperationsInput | string
-    library?: LibraryUpdateOneRequiredWithoutVolumesNestedInput
+    shelf?: ShelfUpdateOneRequiredWithoutVolumesNestedInput
   }
 
   export type VolumeUncheckedUpdateInput = {
     id?: IntFieldUpdateOperationsInput | number
     title?: StringFieldUpdateOperationsInput | string
     content?: StringFieldUpdateOperationsInput | string
-    libraryId?: IntFieldUpdateOperationsInput | number
+    shelfId?: IntFieldUpdateOperationsInput | number
   }
 
   export type VolumeCreateManyInput = {
     id?: number
     title: string
     content?: string
-    libraryId: number
+    shelfId: number
   }
 
   export type VolumeUpdateManyMutationInput = {
@@ -4784,7 +6195,7 @@ export namespace Prisma {
     id?: IntFieldUpdateOperationsInput | number
     title?: StringFieldUpdateOperationsInput | string
     content?: StringFieldUpdateOperationsInput | string
-    libraryId?: IntFieldUpdateOperationsInput | number
+    shelfId?: IntFieldUpdateOperationsInput | number
   }
 
   export type IntFilter<$PrismaModel = never> = {
@@ -4897,10 +6308,10 @@ export namespace Prisma {
     isNot?: WallWhereInput | null
   }
 
-  export type VolumeListRelationFilter = {
-    every?: VolumeWhereInput
-    some?: VolumeWhereInput
-    none?: VolumeWhereInput
+  export type ShelfListRelationFilter = {
+    every?: ShelfWhereInput
+    some?: ShelfWhereInput
+    none?: ShelfWhereInput
   }
 
   export type SortOrderInput = {
@@ -4908,7 +6319,7 @@ export namespace Prisma {
     nulls?: NullsOrder
   }
 
-  export type VolumeOrderByRelationAggregateInput = {
+  export type ShelfOrderByRelationAggregateInput = {
     _count?: SortOrder
   }
 
@@ -4959,40 +6370,117 @@ export namespace Prisma {
     _max?: NestedIntNullableFilter<$PrismaModel>
   }
 
+  export type DateTimeFilter<$PrismaModel = never> = {
+    equals?: Date | string | DateTimeFieldRefInput<$PrismaModel>
+    in?: Date[] | string[]
+    notIn?: Date[] | string[]
+    lt?: Date | string | DateTimeFieldRefInput<$PrismaModel>
+    lte?: Date | string | DateTimeFieldRefInput<$PrismaModel>
+    gt?: Date | string | DateTimeFieldRefInput<$PrismaModel>
+    gte?: Date | string | DateTimeFieldRefInput<$PrismaModel>
+    not?: NestedDateTimeFilter<$PrismaModel> | Date | string
+  }
+
   export type LibraryScalarRelationFilter = {
     is?: LibraryWhereInput
     isNot?: LibraryWhereInput
+  }
+
+  export type VolumeListRelationFilter = {
+    every?: VolumeWhereInput
+    some?: VolumeWhereInput
+    none?: VolumeWhereInput
+  }
+
+  export type VolumeOrderByRelationAggregateInput = {
+    _count?: SortOrder
+  }
+
+  export type ShelfCountOrderByAggregateInput = {
+    id?: SortOrder
+    name?: SortOrder
+    description?: SortOrder
+    createdAt?: SortOrder
+    updatedAt?: SortOrder
+    libraryId?: SortOrder
+  }
+
+  export type ShelfAvgOrderByAggregateInput = {
+    id?: SortOrder
+    libraryId?: SortOrder
+  }
+
+  export type ShelfMaxOrderByAggregateInput = {
+    id?: SortOrder
+    name?: SortOrder
+    description?: SortOrder
+    createdAt?: SortOrder
+    updatedAt?: SortOrder
+    libraryId?: SortOrder
+  }
+
+  export type ShelfMinOrderByAggregateInput = {
+    id?: SortOrder
+    name?: SortOrder
+    description?: SortOrder
+    createdAt?: SortOrder
+    updatedAt?: SortOrder
+    libraryId?: SortOrder
+  }
+
+  export type ShelfSumOrderByAggregateInput = {
+    id?: SortOrder
+    libraryId?: SortOrder
+  }
+
+  export type DateTimeWithAggregatesFilter<$PrismaModel = never> = {
+    equals?: Date | string | DateTimeFieldRefInput<$PrismaModel>
+    in?: Date[] | string[]
+    notIn?: Date[] | string[]
+    lt?: Date | string | DateTimeFieldRefInput<$PrismaModel>
+    lte?: Date | string | DateTimeFieldRefInput<$PrismaModel>
+    gt?: Date | string | DateTimeFieldRefInput<$PrismaModel>
+    gte?: Date | string | DateTimeFieldRefInput<$PrismaModel>
+    not?: NestedDateTimeWithAggregatesFilter<$PrismaModel> | Date | string
+    _count?: NestedIntFilter<$PrismaModel>
+    _min?: NestedDateTimeFilter<$PrismaModel>
+    _max?: NestedDateTimeFilter<$PrismaModel>
+  }
+
+  export type ShelfScalarRelationFilter = {
+    is?: ShelfWhereInput
+    isNot?: ShelfWhereInput
   }
 
   export type VolumeCountOrderByAggregateInput = {
     id?: SortOrder
     title?: SortOrder
     content?: SortOrder
-    libraryId?: SortOrder
+    shelfId?: SortOrder
   }
 
   export type VolumeAvgOrderByAggregateInput = {
     id?: SortOrder
-    libraryId?: SortOrder
+    shelfId?: SortOrder
   }
 
   export type VolumeMaxOrderByAggregateInput = {
     id?: SortOrder
     title?: SortOrder
     content?: SortOrder
-    libraryId?: SortOrder
+    shelfId?: SortOrder
   }
 
   export type VolumeMinOrderByAggregateInput = {
     id?: SortOrder
     title?: SortOrder
     content?: SortOrder
-    libraryId?: SortOrder
+    shelfId?: SortOrder
   }
 
   export type VolumeSumOrderByAggregateInput = {
     id?: SortOrder
-    libraryId?: SortOrder
+    shelfId?: SortOrder
   }
 
   export type LibraryCreateNestedManyWithoutWallInput = {
@@ -5055,18 +6543,18 @@ export namespace Prisma {
     connect?: WallWhereUniqueInput
   }
 
-  export type VolumeCreateNestedManyWithoutLibraryInput = {
-    create?: XOR<VolumeCreateWithoutLibraryInput, VolumeUncheckedCreateWithoutLibraryInput> | VolumeCreateWithoutLibraryInput[] | VolumeUncheckedCreateWithoutLibraryInput[]
-    connectOrCreate?: VolumeCreateOrConnectWithoutLibraryInput | VolumeCreateOrConnectWithoutLibraryInput[]
-    createMany?: VolumeCreateManyLibraryInputEnvelope
-    connect?: VolumeWhereUniqueInput | VolumeWhereUniqueInput[]
+  export type ShelfCreateNestedManyWithoutLibraryInput = {
+    create?: XOR<ShelfCreateWithoutLibraryInput, ShelfUncheckedCreateWithoutLibraryInput> | ShelfCreateWithoutLibraryInput[] | ShelfUncheckedCreateWithoutLibraryInput[]
+    connectOrCreate?: ShelfCreateOrConnectWithoutLibraryInput | ShelfCreateOrConnectWithoutLibraryInput[]
+    createMany?: ShelfCreateManyLibraryInputEnvelope
+    connect?: ShelfWhereUniqueInput | ShelfWhereUniqueInput[]
   }
 
-  export type VolumeUncheckedCreateNestedManyWithoutLibraryInput = {
-    create?: XOR<VolumeCreateWithoutLibraryInput, VolumeUncheckedCreateWithoutLibraryInput> | VolumeCreateWithoutLibraryInput[] | VolumeUncheckedCreateWithoutLibraryInput[]
-    connectOrCreate?: VolumeCreateOrConnectWithoutLibraryInput | VolumeCreateOrConnectWithoutLibraryInput[]
-    createMany?: VolumeCreateManyLibraryInputEnvelope
-    connect?: VolumeWhereUniqueInput | VolumeWhereUniqueInput[]
+  export type ShelfUncheckedCreateNestedManyWithoutLibraryInput = {
+    create?: XOR<ShelfCreateWithoutLibraryInput, ShelfUncheckedCreateWithoutLibraryInput> | ShelfCreateWithoutLibraryInput[] | ShelfUncheckedCreateWithoutLibraryInput[]
+    connectOrCreate?: ShelfCreateOrConnectWithoutLibraryInput | ShelfCreateOrConnectWithoutLibraryInput[]
+    createMany?: ShelfCreateManyLibraryInputEnvelope
+    connect?: ShelfWhereUniqueInput | ShelfWhereUniqueInput[]
   }
 
   export type WallUpdateOneWithoutLibrariesNestedInput = {
@@ -5079,18 +6567,18 @@ export namespace Prisma {
     update?: XOR<XOR<WallUpdateToOneWithWhereWithoutLibrariesInput, WallUpdateWithoutLibrariesInput>, WallUncheckedUpdateWithoutLibrariesInput>
   }
 
-  export type VolumeUpdateManyWithoutLibraryNestedInput = {
-    create?: XOR<VolumeCreateWithoutLibraryInput, VolumeUncheckedCreateWithoutLibraryInput> | VolumeCreateWithoutLibraryInput[] | VolumeUncheckedCreateWithoutLibraryInput[]
-    connectOrCreate?: VolumeCreateOrConnectWithoutLibraryInput | VolumeCreateOrConnectWithoutLibraryInput[]
-    upsert?: VolumeUpsertWithWhereUniqueWithoutLibraryInput | VolumeUpsertWithWhereUniqueWithoutLibraryInput[]
-    createMany?: VolumeCreateManyLibraryInputEnvelope
-    set?: VolumeWhereUniqueInput | VolumeWhereUniqueInput[]
-    disconnect?: VolumeWhereUniqueInput | VolumeWhereUniqueInput[]
-    delete?: VolumeWhereUniqueInput | VolumeWhereUniqueInput[]
-    connect?: VolumeWhereUniqueInput | VolumeWhereUniqueInput[]
-    update?: VolumeUpdateWithWhereUniqueWithoutLibraryInput | VolumeUpdateWithWhereUniqueWithoutLibraryInput[]
-    updateMany?: VolumeUpdateManyWithWhereWithoutLibraryInput | VolumeUpdateManyWithWhereWithoutLibraryInput[]
-    deleteMany?: VolumeScalarWhereInput | VolumeScalarWhereInput[]
+  export type ShelfUpdateManyWithoutLibraryNestedInput = {
+    create?: XOR<ShelfCreateWithoutLibraryInput, ShelfUncheckedCreateWithoutLibraryInput> | ShelfCreateWithoutLibraryInput[] | ShelfUncheckedCreateWithoutLibraryInput[]
+    connectOrCreate?: ShelfCreateOrConnectWithoutLibraryInput | ShelfCreateOrConnectWithoutLibraryInput[]
+    upsert?: ShelfUpsertWithWhereUniqueWithoutLibraryInput | ShelfUpsertWithWhereUniqueWithoutLibraryInput[]
+    createMany?: ShelfCreateManyLibraryInputEnvelope
+    set?: ShelfWhereUniqueInput | ShelfWhereUniqueInput[]
+    disconnect?: ShelfWhereUniqueInput | ShelfWhereUniqueInput[]
+    delete?: ShelfWhereUniqueInput | ShelfWhereUniqueInput[]
+    connect?: ShelfWhereUniqueInput | ShelfWhereUniqueInput[]
+    update?: ShelfUpdateWithWhereUniqueWithoutLibraryInput | ShelfUpdateWithWhereUniqueWithoutLibraryInput[]
+    updateMany?: ShelfUpdateManyWithWhereWithoutLibraryInput | ShelfUpdateManyWithWhereWithoutLibraryInput[]
+    deleteMany?: ShelfScalarWhereInput | ShelfScalarWhereInput[]
   }
 
   export type NullableIntFieldUpdateOperationsInput = {
@@ -5101,32 +6589,92 @@ export namespace Prisma {
     divide?: number
   }
 
-  export type VolumeUncheckedUpdateManyWithoutLibraryNestedInput = {
-    create?: XOR<VolumeCreateWithoutLibraryInput, VolumeUncheckedCreateWithoutLibraryInput> | VolumeCreateWithoutLibraryInput[] | VolumeUncheckedCreateWithoutLibraryInput[]
-    connectOrCreate?: VolumeCreateOrConnectWithoutLibraryInput | VolumeCreateOrConnectWithoutLibraryInput[]
-    upsert?: VolumeUpsertWithWhereUniqueWithoutLibraryInput | VolumeUpsertWithWhereUniqueWithoutLibraryInput[]
-    createMany?: VolumeCreateManyLibraryInputEnvelope
+  export type ShelfUncheckedUpdateManyWithoutLibraryNestedInput = {
+    create?: XOR<ShelfCreateWithoutLibraryInput, ShelfUncheckedCreateWithoutLibraryInput> | ShelfCreateWithoutLibraryInput[] | ShelfUncheckedCreateWithoutLibraryInput[]
+    connectOrCreate?: ShelfCreateOrConnectWithoutLibraryInput | ShelfCreateOrConnectWithoutLibraryInput[]
+    upsert?: ShelfUpsertWithWhereUniqueWithoutLibraryInput | ShelfUpsertWithWhereUniqueWithoutLibraryInput[]
+    createMany?: ShelfCreateManyLibraryInputEnvelope
+    set?: ShelfWhereUniqueInput | ShelfWhereUniqueInput[]
+    disconnect?: ShelfWhereUniqueInput | ShelfWhereUniqueInput[]
+    delete?: ShelfWhereUniqueInput | ShelfWhereUniqueInput[]
+    connect?: ShelfWhereUniqueInput | ShelfWhereUniqueInput[]
+    update?: ShelfUpdateWithWhereUniqueWithoutLibraryInput | ShelfUpdateWithWhereUniqueWithoutLibraryInput[]
+    updateMany?: ShelfUpdateManyWithWhereWithoutLibraryInput | ShelfUpdateManyWithWhereWithoutLibraryInput[]
+    deleteMany?: ShelfScalarWhereInput | ShelfScalarWhereInput[]
+  }
+
+  export type LibraryCreateNestedOneWithoutShelvesInput = {
+    create?: XOR<LibraryCreateWithoutShelvesInput, LibraryUncheckedCreateWithoutShelvesInput>
+    connectOrCreate?: LibraryCreateOrConnectWithoutShelvesInput
+    connect?: LibraryWhereUniqueInput
+  }
+
+  export type VolumeCreateNestedManyWithoutShelfInput = {
+    create?: XOR<VolumeCreateWithoutShelfInput, VolumeUncheckedCreateWithoutShelfInput> | VolumeCreateWithoutShelfInput[] | VolumeUncheckedCreateWithoutShelfInput[]
+    connectOrCreate?: VolumeCreateOrConnectWithoutShelfInput | VolumeCreateOrConnectWithoutShelfInput[]
+    createMany?: VolumeCreateManyShelfInputEnvelope
+    connect?: VolumeWhereUniqueInput | VolumeWhereUniqueInput[]
+  }
+
+  export type VolumeUncheckedCreateNestedManyWithoutShelfInput = {
+    create?: XOR<VolumeCreateWithoutShelfInput, VolumeUncheckedCreateWithoutShelfInput> | VolumeCreateWithoutShelfInput[] | VolumeUncheckedCreateWithoutShelfInput[]
+    connectOrCreate?: VolumeCreateOrConnectWithoutShelfInput | VolumeCreateOrConnectWithoutShelfInput[]
+    createMany?: VolumeCreateManyShelfInputEnvelope
+    connect?: VolumeWhereUniqueInput | VolumeWhereUniqueInput[]
+  }
+
+  export type DateTimeFieldUpdateOperationsInput = {
+    set?: Date | string
+  }
+
+  export type LibraryUpdateOneRequiredWithoutShelvesNestedInput = {
+    create?: XOR<LibraryCreateWithoutShelvesInput, LibraryUncheckedCreateWithoutShelvesInput>
+    connectOrCreate?: LibraryCreateOrConnectWithoutShelvesInput
+    upsert?: LibraryUpsertWithoutShelvesInput
+    connect?: LibraryWhereUniqueInput
+    update?: XOR<XOR<LibraryUpdateToOneWithWhereWithoutShelvesInput, LibraryUpdateWithoutShelvesInput>, LibraryUncheckedUpdateWithoutShelvesInput>
+  }
+
+  export type VolumeUpdateManyWithoutShelfNestedInput = {
+    create?: XOR<VolumeCreateWithoutShelfInput, VolumeUncheckedCreateWithoutShelfInput> | VolumeCreateWithoutShelfInput[] | VolumeUncheckedCreateWithoutShelfInput[]
+    connectOrCreate?: VolumeCreateOrConnectWithoutShelfInput | VolumeCreateOrConnectWithoutShelfInput[]
+    upsert?: VolumeUpsertWithWhereUniqueWithoutShelfInput | VolumeUpsertWithWhereUniqueWithoutShelfInput[]
+    createMany?: VolumeCreateManyShelfInputEnvelope
     set?: VolumeWhereUniqueInput | VolumeWhereUniqueInput[]
     disconnect?: VolumeWhereUniqueInput | VolumeWhereUniqueInput[]
     delete?: VolumeWhereUniqueInput | VolumeWhereUniqueInput[]
     connect?: VolumeWhereUniqueInput | VolumeWhereUniqueInput[]
-    update?: VolumeUpdateWithWhereUniqueWithoutLibraryInput | VolumeUpdateWithWhereUniqueWithoutLibraryInput[]
-    updateMany?: VolumeUpdateManyWithWhereWithoutLibraryInput | VolumeUpdateManyWithWhereWithoutLibraryInput[]
+    update?: VolumeUpdateWithWhereUniqueWithoutShelfInput | VolumeUpdateWithWhereUniqueWithoutShelfInput[]
+    updateMany?: VolumeUpdateManyWithWhereWithoutShelfInput | VolumeUpdateManyWithWhereWithoutShelfInput[]
     deleteMany?: VolumeScalarWhereInput | VolumeScalarWhereInput[]
   }
 
-  export type LibraryCreateNestedOneWithoutVolumesInput = {
-    create?: XOR<LibraryCreateWithoutVolumesInput, LibraryUncheckedCreateWithoutVolumesInput>
-    connectOrCreate?: LibraryCreateOrConnectWithoutVolumesInput
-    connect?: LibraryWhereUniqueInput
+  export type VolumeUncheckedUpdateManyWithoutShelfNestedInput = {
+    create?: XOR<VolumeCreateWithoutShelfInput, VolumeUncheckedCreateWithoutShelfInput> | VolumeCreateWithoutShelfInput[] | VolumeUncheckedCreateWithoutShelfInput[]
+    connectOrCreate?: VolumeCreateOrConnectWithoutShelfInput | VolumeCreateOrConnectWithoutShelfInput[]
+    upsert?: VolumeUpsertWithWhereUniqueWithoutShelfInput | VolumeUpsertWithWhereUniqueWithoutShelfInput[]
+    createMany?: VolumeCreateManyShelfInputEnvelope
+    set?: VolumeWhereUniqueInput | VolumeWhereUniqueInput[]
+    disconnect?: VolumeWhereUniqueInput | VolumeWhereUniqueInput[]
+    delete?: VolumeWhereUniqueInput | VolumeWhereUniqueInput[]
+    connect?: VolumeWhereUniqueInput | VolumeWhereUniqueInput[]
+    update?: VolumeUpdateWithWhereUniqueWithoutShelfInput | VolumeUpdateWithWhereUniqueWithoutShelfInput[]
+    updateMany?: VolumeUpdateManyWithWhereWithoutShelfInput | VolumeUpdateManyWithWhereWithoutShelfInput[]
+    deleteMany?: VolumeScalarWhereInput | VolumeScalarWhereInput[]
   }
 
-  export type LibraryUpdateOneRequiredWithoutVolumesNestedInput = {
-    create?: XOR<LibraryCreateWithoutVolumesInput, LibraryUncheckedCreateWithoutVolumesInput>
-    connectOrCreate?: LibraryCreateOrConnectWithoutVolumesInput
-    upsert?: LibraryUpsertWithoutVolumesInput
-    connect?: LibraryWhereUniqueInput
-    update?: XOR<XOR<LibraryUpdateToOneWithWhereWithoutVolumesInput, LibraryUpdateWithoutVolumesInput>, LibraryUncheckedUpdateWithoutVolumesInput>
+  export type ShelfCreateNestedOneWithoutVolumesInput = {
+    create?: XOR<ShelfCreateWithoutVolumesInput, ShelfUncheckedCreateWithoutVolumesInput>
+    connectOrCreate?: ShelfCreateOrConnectWithoutVolumesInput
+    connect?: ShelfWhereUniqueInput
+  }
+
+  export type ShelfUpdateOneRequiredWithoutVolumesNestedInput = {
+    create?: XOR<ShelfCreateWithoutVolumesInput, ShelfUncheckedCreateWithoutVolumesInput>
+    connectOrCreate?: ShelfCreateOrConnectWithoutVolumesInput
+    upsert?: ShelfUpsertWithoutVolumesInput
+    connect?: ShelfWhereUniqueInput
+    update?: XOR<XOR<ShelfUpdateToOneWithWhereWithoutVolumesInput, ShelfUpdateWithoutVolumesInput>, ShelfUncheckedUpdateWithoutVolumesInput>
   }
 
   export type NestedIntFilter<$PrismaModel = never> = {
@@ -5236,17 +6784,42 @@ export namespace Prisma {
     not?: NestedFloatNullableFilter<$PrismaModel> | number | null
   }
 
+  export type NestedDateTimeFilter<$PrismaModel = never> = {
+    equals?: Date | string | DateTimeFieldRefInput<$PrismaModel>
+    in?: Date[] | string[]
+    notIn?: Date[] | string[]
+    lt?: Date | string | DateTimeFieldRefInput<$PrismaModel>
+    lte?: Date | string | DateTimeFieldRefInput<$PrismaModel>
+    gt?: Date | string | DateTimeFieldRefInput<$PrismaModel>
+    gte?: Date | string | DateTimeFieldRefInput<$PrismaModel>
+    not?: NestedDateTimeFilter<$PrismaModel> | Date | string
+  }
+
+  export type NestedDateTimeWithAggregatesFilter<$PrismaModel = never> = {
+    equals?: Date | string | DateTimeFieldRefInput<$PrismaModel>
+    in?: Date[] | string[]
+    notIn?: Date[] | string[]
+    lt?: Date | string | DateTimeFieldRefInput<$PrismaModel>
+    lte?: Date | string | DateTimeFieldRefInput<$PrismaModel>
+    gt?: Date | string | DateTimeFieldRefInput<$PrismaModel>
+    gte?: Date | string | DateTimeFieldRefInput<$PrismaModel>
+    not?: NestedDateTimeWithAggregatesFilter<$PrismaModel> | Date | string
+    _count?: NestedIntFilter<$PrismaModel>
+    _min?: NestedDateTimeFilter<$PrismaModel>
+    _max?: NestedDateTimeFilter<$PrismaModel>
+  }
+
   export type LibraryCreateWithoutWallInput = {
     name: string
     description: string
-    volumes?: VolumeCreateNestedManyWithoutLibraryInput
+    shelves?: ShelfCreateNestedManyWithoutLibraryInput
   }
 
   export type LibraryUncheckedCreateWithoutWallInput = {
     id?: number
     name: string
     description: string
-    volumes?: VolumeUncheckedCreateNestedManyWithoutLibraryInput
+    shelves?: ShelfUncheckedCreateNestedManyWithoutLibraryInput
   }
 
   export type LibraryCreateOrConnectWithoutWallInput = {
@@ -5300,24 +6873,30 @@ export namespace Prisma {
     create: XOR<WallCreateWithoutLibrariesInput, WallUncheckedCreateWithoutLibrariesInput>
   }
 
-  export type VolumeCreateWithoutLibraryInput = {
-    title: string
-    content?: string
+  export type ShelfCreateWithoutLibraryInput = {
+    name: string
+    description: string
+    createdAt?: Date | string
+    updatedAt?: Date | string
+    volumes?: VolumeCreateNestedManyWithoutShelfInput
   }
 
-  export type VolumeUncheckedCreateWithoutLibraryInput = {
+  export type ShelfUncheckedCreateWithoutLibraryInput = {
     id?: number
-    title: string
-    content?: string
+    name: string
+    description: string
+    createdAt?: Date | string
+    updatedAt?: Date | string
+    volumes?: VolumeUncheckedCreateNestedManyWithoutShelfInput
   }
 
-  export type VolumeCreateOrConnectWithoutLibraryInput = {
-    where: VolumeWhereUniqueInput
-    create: XOR<VolumeCreateWithoutLibraryInput, VolumeUncheckedCreateWithoutLibraryInput>
+  export type ShelfCreateOrConnectWithoutLibraryInput = {
+    where: ShelfWhereUniqueInput
+    create: XOR<ShelfCreateWithoutLibraryInput, ShelfUncheckedCreateWithoutLibraryInput>
   }
 
-  export type VolumeCreateManyLibraryInputEnvelope = {
-    data: VolumeCreateManyLibraryInput | VolumeCreateManyLibraryInput[]
+  export type ShelfCreateManyLibraryInputEnvelope = {
+    data: ShelfCreateManyLibraryInput | ShelfCreateManyLibraryInput[]
   }
 
   export type WallUpsertWithoutLibrariesInput = {
@@ -5342,20 +6921,110 @@ export namespace Prisma {
     description?: StringFieldUpdateOperationsInput | string
   }
 
-  export type VolumeUpsertWithWhereUniqueWithoutLibraryInput = {
-    where: VolumeWhereUniqueInput
-    update: XOR<VolumeUpdateWithoutLibraryInput, VolumeUncheckedUpdateWithoutLibraryInput>
-    create: XOR<VolumeCreateWithoutLibraryInput, VolumeUncheckedCreateWithoutLibraryInput>
+  export type ShelfUpsertWithWhereUniqueWithoutLibraryInput = {
+    where: ShelfWhereUniqueInput
+    update: XOR<ShelfUpdateWithoutLibraryInput, ShelfUncheckedUpdateWithoutLibraryInput>
+    create: XOR<ShelfCreateWithoutLibraryInput, ShelfUncheckedCreateWithoutLibraryInput>
   }
 
-  export type VolumeUpdateWithWhereUniqueWithoutLibraryInput = {
-    where: VolumeWhereUniqueInput
-    data: XOR<VolumeUpdateWithoutLibraryInput, VolumeUncheckedUpdateWithoutLibraryInput>
+  export type ShelfUpdateWithWhereUniqueWithoutLibraryInput = {
+    where: ShelfWhereUniqueInput
+    data: XOR<ShelfUpdateWithoutLibraryInput, ShelfUncheckedUpdateWithoutLibraryInput>
   }
 
-  export type VolumeUpdateManyWithWhereWithoutLibraryInput = {
+  export type ShelfUpdateManyWithWhereWithoutLibraryInput = {
+    where: ShelfScalarWhereInput
+    data: XOR<ShelfUpdateManyMutationInput, ShelfUncheckedUpdateManyWithoutLibraryInput>
+  }
+
+  export type ShelfScalarWhereInput = {
+    AND?: ShelfScalarWhereInput | ShelfScalarWhereInput[]
+    OR?: ShelfScalarWhereInput[]
+    NOT?: ShelfScalarWhereInput | ShelfScalarWhereInput[]
+    id?: IntFilter<"Shelf"> | number
+    name?: StringFilter<"Shelf"> | string
+    description?: StringFilter<"Shelf"> | string
+    createdAt?: DateTimeFilter<"Shelf"> | Date | string
+    updatedAt?: DateTimeFilter<"Shelf"> | Date | string
+    libraryId?: IntFilter<"Shelf"> | number
+  }
+
+  export type LibraryCreateWithoutShelvesInput = {
+    name: string
+    description: string
+    wall?: WallCreateNestedOneWithoutLibrariesInput
+  }
+
+  export type LibraryUncheckedCreateWithoutShelvesInput = {
+    id?: number
+    name: string
+    description: string
+    wallId?: number | null
+  }
+
+  export type LibraryCreateOrConnectWithoutShelvesInput = {
+    where: LibraryWhereUniqueInput
+    create: XOR<LibraryCreateWithoutShelvesInput, LibraryUncheckedCreateWithoutShelvesInput>
+  }
+
+  export type VolumeCreateWithoutShelfInput = {
+    title: string
+    content?: string
+  }
+
+  export type VolumeUncheckedCreateWithoutShelfInput = {
+    id?: number
+    title: string
+    content?: string
+  }
+
+  export type VolumeCreateOrConnectWithoutShelfInput = {
+    where: VolumeWhereUniqueInput
+    create: XOR<VolumeCreateWithoutShelfInput, VolumeUncheckedCreateWithoutShelfInput>
+  }
+
+  export type VolumeCreateManyShelfInputEnvelope = {
+    data: VolumeCreateManyShelfInput | VolumeCreateManyShelfInput[]
+  }
+
+  export type LibraryUpsertWithoutShelvesInput = {
+    update: XOR<LibraryUpdateWithoutShelvesInput, LibraryUncheckedUpdateWithoutShelvesInput>
+    create: XOR<LibraryCreateWithoutShelvesInput, LibraryUncheckedCreateWithoutShelvesInput>
+    where?: LibraryWhereInput
+  }
+
+  export type LibraryUpdateToOneWithWhereWithoutShelvesInput = {
+    where?: LibraryWhereInput
+    data: XOR<LibraryUpdateWithoutShelvesInput, LibraryUncheckedUpdateWithoutShelvesInput>
+  }
+
+  export type LibraryUpdateWithoutShelvesInput = {
+    name?: StringFieldUpdateOperationsInput | string
+    description?: StringFieldUpdateOperationsInput | string
+    wall?: WallUpdateOneWithoutLibrariesNestedInput
+  }
+
+  export type LibraryUncheckedUpdateWithoutShelvesInput = {
+    id?: IntFieldUpdateOperationsInput | number
+    name?: StringFieldUpdateOperationsInput | string
+    description?: StringFieldUpdateOperationsInput | string
+    wallId?: NullableIntFieldUpdateOperationsInput | number | null
+  }
+
+  export type VolumeUpsertWithWhereUniqueWithoutShelfInput = {
+    where: VolumeWhereUniqueInput
+    update: XOR<VolumeUpdateWithoutShelfInput, VolumeUncheckedUpdateWithoutShelfInput>
+    create: XOR<VolumeCreateWithoutShelfInput, VolumeUncheckedCreateWithoutShelfInput>
+  }
+
+  export type VolumeUpdateWithWhereUniqueWithoutShelfInput = {
+    where: VolumeWhereUniqueInput
+    data: XOR<VolumeUpdateWithoutShelfInput, VolumeUncheckedUpdateWithoutShelfInput>
+  }
+
+  export type VolumeUpdateManyWithWhereWithoutShelfInput = {
     where: VolumeScalarWhereInput
-    data: XOR<VolumeUpdateManyMutationInput, VolumeUncheckedUpdateManyWithoutLibraryInput>
+    data: XOR<VolumeUpdateManyMutationInput, VolumeUncheckedUpdateManyWithoutShelfInput>
   }
 
   export type VolumeScalarWhereInput = {
@@ -5365,49 +7034,57 @@ export namespace Prisma {
     id?: IntFilter<"Volume"> | number
     title?: StringFilter<"Volume"> | string
     content?: StringFilter<"Volume"> | string
-    libraryId?: IntFilter<"Volume"> | number
+    shelfId?: IntFilter<"Volume"> | number
   }
 
-  export type LibraryCreateWithoutVolumesInput = {
+  export type ShelfCreateWithoutVolumesInput = {
     name: string
     description: string
-    wall?: WallCreateNestedOneWithoutLibrariesInput
+    createdAt?: Date | string
+    updatedAt?: Date | string
+    library: LibraryCreateNestedOneWithoutShelvesInput
   }
 
-  export type LibraryUncheckedCreateWithoutVolumesInput = {
+  export type ShelfUncheckedCreateWithoutVolumesInput = {
     id?: number
     name: string
     description: string
-    wallId?: number | null
+    createdAt?: Date | string
+    updatedAt?: Date | string
+    libraryId: number
   }
 
-  export type LibraryCreateOrConnectWithoutVolumesInput = {
-    where: LibraryWhereUniqueInput
-    create: XOR<LibraryCreateWithoutVolumesInput, LibraryUncheckedCreateWithoutVolumesInput>
+  export type ShelfCreateOrConnectWithoutVolumesInput = {
+    where: ShelfWhereUniqueInput
+    create: XOR<ShelfCreateWithoutVolumesInput, ShelfUncheckedCreateWithoutVolumesInput>
   }
 
-  export type LibraryUpsertWithoutVolumesInput = {
-    update: XOR<LibraryUpdateWithoutVolumesInput, LibraryUncheckedUpdateWithoutVolumesInput>
-    create: XOR<LibraryCreateWithoutVolumesInput, LibraryUncheckedCreateWithoutVolumesInput>
-    where?: LibraryWhereInput
+  export type ShelfUpsertWithoutVolumesInput = {
+    update: XOR<ShelfUpdateWithoutVolumesInput, ShelfUncheckedUpdateWithoutVolumesInput>
+    create: XOR<ShelfCreateWithoutVolumesInput, ShelfUncheckedCreateWithoutVolumesInput>
+    where?: ShelfWhereInput
   }
 
-  export type LibraryUpdateToOneWithWhereWithoutVolumesInput = {
-    where?: LibraryWhereInput
-    data: XOR<LibraryUpdateWithoutVolumesInput, LibraryUncheckedUpdateWithoutVolumesInput>
+  export type ShelfUpdateToOneWithWhereWithoutVolumesInput = {
+    where?: ShelfWhereInput
+    data: XOR<ShelfUpdateWithoutVolumesInput, ShelfUncheckedUpdateWithoutVolumesInput>
   }
 
-  export type LibraryUpdateWithoutVolumesInput = {
+  export type ShelfUpdateWithoutVolumesInput = {
     name?: StringFieldUpdateOperationsInput | string
     description?: StringFieldUpdateOperationsInput | string
-    wall?: WallUpdateOneWithoutLibrariesNestedInput
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    library?: LibraryUpdateOneRequiredWithoutShelvesNestedInput
   }
 
-  export type LibraryUncheckedUpdateWithoutVolumesInput = {
+  export type ShelfUncheckedUpdateWithoutVolumesInput = {
     id?: IntFieldUpdateOperationsInput | number
     name?: StringFieldUpdateOperationsInput | string
     description?: StringFieldUpdateOperationsInput | string
-    wallId?: NullableIntFieldUpdateOperationsInput | number | null
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    libraryId?: IntFieldUpdateOperationsInput | number
   }
 
   export type LibraryCreateManyWallInput = {
@@ -5419,14 +7096,14 @@ export namespace Prisma {
   export type LibraryUpdateWithoutWallInput = {
     name?: StringFieldUpdateOperationsInput | string
     description?: StringFieldUpdateOperationsInput | string
-    volumes?: VolumeUpdateManyWithoutLibraryNestedInput
+    shelves?: ShelfUpdateManyWithoutLibraryNestedInput
   }
 
   export type LibraryUncheckedUpdateWithoutWallInput = {
     id?: IntFieldUpdateOperationsInput | number
     name?: StringFieldUpdateOperationsInput | string
     description?: StringFieldUpdateOperationsInput | string
-    volumes?: VolumeUncheckedUpdateManyWithoutLibraryNestedInput
+    shelves?: ShelfUncheckedUpdateManyWithoutLibraryNestedInput
   }
 
   export type LibraryUncheckedUpdateManyWithoutWallInput = {
@@ -5435,24 +7112,57 @@ export namespace Prisma {
     description?: StringFieldUpdateOperationsInput | string
   }
 
-  export type VolumeCreateManyLibraryInput = {
+  export type ShelfCreateManyLibraryInput = {
+    id?: number
+    name: string
+    description: string
+    createdAt?: Date | string
+    updatedAt?: Date | string
+  }
+
+  export type ShelfUpdateWithoutLibraryInput = {
+    name?: StringFieldUpdateOperationsInput | string
+    description?: StringFieldUpdateOperationsInput | string
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    volumes?: VolumeUpdateManyWithoutShelfNestedInput
+  }
+
+  export type ShelfUncheckedUpdateWithoutLibraryInput = {
+    id?: IntFieldUpdateOperationsInput | number
+    name?: StringFieldUpdateOperationsInput | string
+    description?: StringFieldUpdateOperationsInput | string
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    volumes?: VolumeUncheckedUpdateManyWithoutShelfNestedInput
+  }
+
+  export type ShelfUncheckedUpdateManyWithoutLibraryInput = {
+    id?: IntFieldUpdateOperationsInput | number
+    name?: StringFieldUpdateOperationsInput | string
+    description?: StringFieldUpdateOperationsInput | string
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
+  export type VolumeCreateManyShelfInput = {
     id?: number
     title: string
     content?: string
   }
 
-  export type VolumeUpdateWithoutLibraryInput = {
+  export type VolumeUpdateWithoutShelfInput = {
     title?: StringFieldUpdateOperationsInput | string
     content?: StringFieldUpdateOperationsInput | string
   }
 
-  export type VolumeUncheckedUpdateWithoutLibraryInput = {
+  export type VolumeUncheckedUpdateWithoutShelfInput = {
     id?: IntFieldUpdateOperationsInput | number
     title?: StringFieldUpdateOperationsInput | string
     content?: StringFieldUpdateOperationsInput | string
   }
 
-  export type VolumeUncheckedUpdateManyWithoutLibraryInput = {
+  export type VolumeUncheckedUpdateManyWithoutShelfInput = {
     id?: IntFieldUpdateOperationsInput | number
     title?: StringFieldUpdateOperationsInput | string
     content?: StringFieldUpdateOperationsInput | string

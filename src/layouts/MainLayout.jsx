@@ -5,13 +5,15 @@ import { SearchProvider } from "../context/SearchContext";
 function MainLayout({ children }) {
   return (
     <SearchProvider>
-      <div className="bg-zinc-950 min-h-screen text-white flex">
+      <div className="flex h-screen overflow-hidden bg-zinc-950 text-white">
         <Sidebar />
 
-        <div className="flex-1 flex flex-col">
+        <div className="flex min-h-0 min-w-0 flex-1 flex-col">
           <Navbar />
 
-          <main className="p-6 flex-1">{children}</main>
+          <main className="min-h-0 flex-1 overflow-x-hidden overflow-y-auto p-6">
+            {children}
+          </main>
         </div>
       </div>
     </SearchProvider>

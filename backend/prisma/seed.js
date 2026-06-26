@@ -2,6 +2,7 @@ const prisma = require("../config/prisma");
 
 async function main() {
   await prisma.volume.deleteMany();
+  await prisma.shelf.deleteMany();
   await prisma.library.deleteMany();
   await prisma.wall.deleteMany();
 
@@ -18,16 +19,34 @@ async function main() {
 
             description: "Conteúdo de programação e tecnologia.",
 
-            volumes: {
+            shelves: {
               create: [
                 {
-                  title: "React",
-                  content: "Componentes, props e estados.",
+                  name: "Frontend",
+                  description: "Frameworks e interfaces.",
+
+                  volumes: {
+                    create: [
+                      {
+                        title: "React",
+                        content: "Componentes, props e estados.",
+                      },
+                    ],
+                  },
                 },
 
                 {
-                  title: "Banco de Dados",
-                  content: "SQL, PostgreSQL e modelagem.",
+                  name: "Backend",
+                  description: "Servidores e persistência.",
+
+                  volumes: {
+                    create: [
+                      {
+                        title: "Banco de Dados",
+                        content: "SQL, PostgreSQL e modelagem.",
+                      },
+                    ],
+                  },
                 },
               ],
             },
@@ -38,11 +57,21 @@ async function main() {
 
             description: "Estudos filosóficos.",
 
-            volumes: {
+            shelves: {
               create: [
                 {
-                  title: "Estoicismo",
-                  content: "Sêneca, Marco Aurélio e Epicteto.",
+                  name: "Estoicismo",
+                  description: "Filósofos estoicos.",
+
+                  volumes: {
+                    create: [
+                      {
+                        title: "Sêneca",
+                        content:
+                          "Cartas morais e reflexões sobre a vida.",
+                      },
+                    ],
+                  },
                 },
               ],
             },
@@ -68,7 +97,7 @@ async function main() {
     },
   });
 
-  console.log("Banco populado com walls");
+  console.log("Banco populado com walls, estantes, prateleiras e volumes");
 }
 
 main()

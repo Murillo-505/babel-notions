@@ -1,18 +1,51 @@
-import { useEffect, useState, useSyncExternalStore } from "react";
+import { useSyncExternalStore } from "react";
 
 import { Link, useLocation } from "react-router-dom";
+
+import BookSpine from "./library/BookSpine";
 
 import {
   getFavoriteVolumes,
   getRecentVolumes,
+  getVolumeContextLabel,
+  getVolumeNavigationState,
   subscribeLocalData,
 } from "../services/localDataService";
 
-import { getWalls } from "../services/wallService";
+function SidebarVolumeLink({ volume, isActive, badge }) {
+  const context = getVolumeContextLabel(volume);
+
+  return (
+    <Link
+      to={`/volumes/${volume.id}`}
+      state={getVolumeNavigationState(volume)}
+      className={`nav-item flex items-center gap-2.5 ${isActive ? "nav-item-active" : "nav-item-inactive"}`}
+    >
+      <BookSpine
+        volume={{ id: volume.id, title: volume.title }}
+        readOnly
+        size="sm"
+      />
+
+      <div className="min-w-0 flex-1">
+        <p className="flex items-center gap-1.5 font-medium truncate">
+          {badge ? (
+            <span className="shrink-0 text-amber-400" aria-hidden="true">
+              ★
+            </span>
+          ) : null}
+          <span className="truncate">{volume.title}</span>
+        </p>
+
+        {context ? (
+          <p className="truncate text-xs text-zinc-500">{context}</p>
+        ) : null}
+      </div>
+    </Link>
+  );
+}
 
 function Sidebar() {
-  const [walls, setWalls] = useState([]);
-
   const location = useLocation();
 
   const recentVolumes = useSyncExternalStore(
@@ -27,116 +60,67 @@ function Sidebar() {
     getFavoriteVolumes,
   );
 
-  useEffect(() => {
-    async function loadWalls() {
-      const data = await getWalls();
-
-      setWalls(data);
-    }
-
-    loadWalls();
-  }, [location.pathname]);
-
   function navClass(isActive) {
     return `nav-item ${isActive ? "nav-item-active" : "nav-item-inactive"}`;
   }
 
-  const isHomeActive = location.pathname === "/";
+  const isHallActive = location.pathname === "/";
   const isSettingsActive = location.pathname === "/settings";
 
   return (
-    <aside className="w-72 h-screen sticky top-0 bg-zinc-900 border-r border-zinc-800 p-5 flex flex-col overflow-hidden">
-      <Link to="/" className={`mb-8 block ${navClass(isHomeActive)}`}>
-        <h1 className="text-2xl font-bold">Notions of Babel</h1>
-
+    <aside className="flex h-full w-72 shrink-0 flex-col overflow-hidden border-r border-zinc-800 bg-zinc-900 p-5">
+      <Link to="/" className={`mb-8 block ${navClass(isHallActive)}`}>
+        <p className="text-[10px] uppercase tracking-[0.2em] text-zinc-500">
+          Saguão
+        </p>
+        <h1 className="mt-1 text-2xl font-bold">Notions of Babel</h1>
         <p className="text-zinc-500 text-sm">Biblioteca infinita</p>
       </Link>
 
-      <section className="flex-1 pr-2 space-y-8 overflow-y-auto">
+      <section className="min-h-0 flex-1 space-y-8 overflow-y-auto pr-2">
         <div>
-          <h2 className="text-xs uppercase text-zinc-500 mb-3 tracking-widest">
-            Paredes
-          </h2>
-
-          <div className="space-y-2 overflow-y-auto max-h-[calc(30vh)]">
-            {walls.map((wall) => {
-              const isActive = location.pathname === `/walls/${wall.id}`;
-
-              return (
-                <Link
-                  key={wall.id}
-                  to={`/walls/${wall.id}`}
-                  className={navClass(isActive)}
-                >
-                  <p className="font-medium">{wall.name}</p>
-
-                  <p className="text-xs text-zinc-500 truncate">
-                    {wall.description}
-                  </p>
-                </Link>
-              );
-            })}
-          </div>
-        </div>
-
-        <div>
-          <h2 className="text-xs uppercase text-zinc-500 mb-3 tracking-widest">
+          <h2 className="mb-3 text-xs uppercase tracking-widest text-zinc-500">
             Recentes
           </h2>
 
           {recentVolumes.length === 0 ? (
-            <p className="text-zinc-500 text-sm">Nenhum volume recente</p>
+            <p className="text-sm text-zinc-500">Nenhum volume recente</p>
           ) : (
             <div className="space-y-2">
-              {recentVolumes.map((volume) => {
-                const isActive = location.pathname === `/volumes/${volume.id}`;
-
-                return (
-                  <Link
-                    key={volume.id}
-                    to={`/volumes/${volume.id}`}
-                    className={navClass(isActive)}
-                  >
-                    <p className="font-medium truncate">{volume.title}</p>
-
-                    <p className="text-xs text-zinc-500">Volume recente</p>
-                  </Link>
-                );
-              })}
+              {recentVolumes.map((volume) => (
+                <SidebarVolumeLink
+                  key={volume.id}
+                  volume={volume}
+                  isActive={location.pathname === `/volumes/${volume.id}`}
+                />
+              ))}
             </div>
           )}
         </div>
 
         <div>
-          <h2 className="text-xs uppercase text-zinc-500 mb-3 tracking-widest">
+          <h2 className="mb-3 text-xs uppercase tracking-widest text-zinc-500">
             Favoritos
           </h2>
 
           {favoriteVolumes.length === 0 ? (
-            <p className="text-zinc-500 text-sm">Nenhum favorito</p>
+            <p className="text-sm text-zinc-500">Nenhum favorito</p>
           ) : (
             <div className="space-y-2">
-              {favoriteVolumes.map((volume) => {
-                const isActive = location.pathname === `/volumes/${volume.id}`;
-
-                return (
-                  <Link
-                    key={volume.id}
-                    to={`/volumes/${volume.id}`}
-                    className={navClass(isActive)}
-                  >
-                    <p className="font-medium truncate">{volume.title}</p>
-
-                    <p className="text-xs text-zinc-500">Favorito</p>
-                  </Link>
-                );
-              })}
+              {favoriteVolumes.map((volume) => (
+                <SidebarVolumeLink
+                  key={volume.id}
+                  volume={volume}
+                  isActive={location.pathname === `/volumes/${volume.id}`}
+                  badge
+                />
+              ))}
             </div>
           )}
         </div>
       </section>
 
-      <section className="pt-4 border-t border-zinc-800 mt-4">
+      <section className="mt-4 border-t border-zinc-800 pt-4">
         <Link to="/settings" className={navClass(isSettingsActive)}>
           Configurações
         </Link>

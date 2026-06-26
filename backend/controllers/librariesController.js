@@ -3,7 +3,11 @@ const prisma = require("../config/prisma");
 async function listLibraries(request, response) {
   const libraries = await prisma.library.findMany({
     include: {
-      volumes: true,
+      shelves: {
+        include: {
+          volumes: true,
+        },
+      },
     },
   });
 
@@ -19,7 +23,11 @@ async function getLibrary(request, response) {
     },
     include: {
       wall: true,
-      volumes: true,
+      shelves: {
+        include: {
+          volumes: true,
+        },
+      },
     },
   });
 
@@ -59,16 +67,30 @@ async function updateLibrary(request, response) {
 
 async function deleteLibrary(request, response) {
   const { id } = request.params;
+  const libraryId = Number(id);
 
-  await prisma.volume.deleteMany({
-    where: {
-      libraryId: Number(id),
-    },
+  const shelves = await prisma.shelf.findMany({
+    where: { libraryId },
+    select: { id: true },
+  });
+
+  const shelfIds = shelves.map((shelf) => shelf.id);
+
+  if (shelfIds.length > 0) {
+    await prisma.volume.deleteMany({
+      where: {
+        shelfId: { in: shelfIds },
+      },
+    });
+  }
+
+  await prisma.shelf.deleteMany({
+    where: { libraryId },
   });
 
   await prisma.library.delete({
     where: {
-      id: Number(id),
+      id: libraryId,
     },
   });
 

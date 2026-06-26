@@ -4,17 +4,13 @@ const API_URL = import.meta.env.VITE_API_URL;
 export async function getLibraries() {
   const response = await fetch(`${API_URL}/libraries`);
 
-  const data = await response.json();
-
-  return data;
+  return response.json();
 }
 
 export async function getLibraryById(id) {
   const response = await fetch(`${API_URL}/libraries/${id}`);
 
-  const data = await response.json();
-
-  return data;
+  return response.json();
 }
 
 export async function createLibrary(library) {
