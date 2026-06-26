@@ -1,6 +1,8 @@
 import { useEffect, useState } from "react";
 import { useParams, Link } from "react-router-dom";
 
+import LoadingSkeleton from "../components/LoadingSkeleton";
+
 import { getLibraryById } from "../services/libraryService";
 
 import {
@@ -15,8 +17,10 @@ function LibraryDetails() {
   const { id } = useParams();
 
   const [library, setLibrary] = useState(null);
-
   const [title, setTitle] = useState("");
+  const [editingId, setEditingId] = useState(null);
+  const [editTitle, setEditTitle] = useState("");
+  const [deletingId, setDeletingId] = useState(null);
 
   useEffect(() => {
     loadLibrary();
@@ -44,46 +48,49 @@ function LibraryDetails() {
     await loadLibrary();
   }
 
-  async function handleDeleteVolume(volumeId) {
-    const confirmed = window.confirm("Deseja excluir este volume?");
-
-    if (!confirmed) return;
-
-    await deleteVolume(volumeId);
-
-    await loadLibrary();
+  function startEditVolume(volume) {
+    setEditingId(volume.id);
+    setEditTitle(volume.title);
+    setDeletingId(null);
   }
 
-  async function handleEditVolume(volume) {
-    const newTitle = prompt("Novo nome do volume:", volume.title);
+  function cancelEditVolume() {
+    setEditingId(null);
+    setEditTitle("");
+  }
 
-    if (!newTitle) return;
+  async function saveEditVolume(volume) {
+    if (!editTitle.trim()) return;
 
     await updateVolume(volume.id, {
-      title: newTitle,
+      title: editTitle,
       content: volume.content,
     });
 
+    cancelEditVolume();
+    await loadLibrary();
+  }
+
+  async function confirmDeleteVolume(volumeId) {
+    await deleteVolume(volumeId);
+
+    setDeletingId(null);
     await loadLibrary();
   }
 
   if (!library) {
-    return <h1>Carregando...</h1>;
+    return <LoadingSkeleton />;
   }
 
   const breadcrumbItems = [
     {
       label: "Home",
-
       path: "/",
     },
-
     {
       label: library.wall?.name,
-
       path: `/walls/${library.wallId}`,
     },
-
     {
       label: library.name,
     },
@@ -99,7 +106,7 @@ function LibraryDetails() {
         <p className="text-zinc-400">{library.description}</p>
       </div>
 
-      <div className="bg-zinc-900 border border-zinc-800 rounded-2xl p-6 mb-8">
+      <div className="card mb-8">
         <h2 className="text-xl font-bold mb-4">Novo Volume</h2>
 
         <form onSubmit={handleCreateVolume} className="flex gap-4">
@@ -108,13 +115,10 @@ function LibraryDetails() {
             placeholder="Nome do volume"
             value={title}
             onChange={(event) => setTitle(event.target.value)}
-            className="flex-1 bg-zinc-800 border border-zinc-700 rounded-lg px-4 py-3"
+            className="input-sm flex-1"
           />
 
-          <button
-            type="submit"
-            className="bg-white text-black px-5 rounded-lg font-medium hover:opacity-90 transition cursor-pointer"
-          >
+          <button type="submit" className="btn-primary">
             Criar
           </button>
         </form>
@@ -128,36 +132,89 @@ function LibraryDetails() {
         ) : (
           <div className="grid grid-cols-3 gap-4">
             {library.volumes.map((volume) => (
-              <div
-                key={volume.id}
-                className="bg-zinc-900 border border-zinc-800 rounded-xl p-4"
-              >
-                <Link to={`/volumes/${volume.id}`}>
-                  <h3 className="font-semibold text-lg hover:text-zinc-300">
-                    {volume.title}
-                  </h3>
-                  <p className="text-zinc-400 text-sm mt-2 line-clamp-3">
-                    {volume.content
-                      ? volume.content.slice(0, 100) + "..."
-                      : "Volume vazio"}
-                  </p>
-                </Link>
+              <div key={volume.id} className="card-sm">
+                {editingId === volume.id ? (
+                  <div className="space-y-3">
+                    <input
+                      type="text"
+                      value={editTitle}
+                      onChange={(event) => setEditTitle(event.target.value)}
+                      className="input-sm"
+                      placeholder="Nome do volume"
+                    />
 
-                <div className="flex gap-2 mt-4">
-                  <button
-                    onClick={() => handleEditVolume(volume)}
-                    className="text-sm bg-zinc-800 px-3 py-1 rounded hover:bg-zinc-700 cursor-pointer"
-                  >
-                    Editar
-                  </button>
+                    <div className="flex gap-2">
+                      <button
+                        onClick={() => saveEditVolume(volume)}
+                        className="btn-primary"
+                      >
+                        Salvar
+                      </button>
 
-                  <button
-                    onClick={() => handleDeleteVolume(volume.id)}
-                    className="text-sm bg-red-900 px-3 py-1 rounded hover:opacity-90 cursor-pointer"
-                  >
-                    Excluir
-                  </button>
-                </div>
+                      <button
+                        onClick={cancelEditVolume}
+                        className="btn-secondary-sm"
+                      >
+                        Cancelar
+                      </button>
+                    </div>
+                  </div>
+                ) : (
+                  <>
+                    <Link to={`/volumes/${volume.id}`}>
+                      <h3 className="font-semibold text-lg hover:text-zinc-300">
+                        {volume.title}
+                      </h3>
+
+                      <p className="text-zinc-400 text-sm mt-2 line-clamp-3">
+                        {volume.content
+                          ? volume.content.slice(0, 100) + "..."
+                          : "Volume vazio"}
+                      </p>
+                    </Link>
+
+                    <div className="flex gap-2 mt-4 items-center flex-wrap">
+                      <button
+                        onClick={() => startEditVolume(volume)}
+                        className="btn-secondary-sm"
+                      >
+                        Editar
+                      </button>
+
+                      {deletingId === volume.id ? (
+                        <>
+                          <span className="text-xs text-zinc-400">
+                            Tem certeza?
+                          </span>
+
+                          <button
+                            onClick={() => confirmDeleteVolume(volume.id)}
+                            className="btn-danger-sm"
+                          >
+                            Sim, excluir
+                          </button>
+
+                          <button
+                            onClick={() => setDeletingId(null)}
+                            className="btn-secondary-sm"
+                          >
+                            Cancelar
+                          </button>
+                        </>
+                      ) : (
+                        <button
+                          onClick={() => {
+                            setDeletingId(volume.id);
+                            cancelEditVolume();
+                          }}
+                          className="btn-danger-sm"
+                        >
+                          Excluir
+                        </button>
+                      )}
+                    </div>
+                  </>
+                )}
               </div>
             ))}
           </div>

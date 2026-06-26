@@ -1,135 +1,252 @@
-import { useEffect, useState } from "react";
+import { useEffect, useState, useSyncExternalStore } from "react";
+
+import { Link } from "react-router-dom";
+
+import {
+  clearFavoriteVolumes,
+  clearRecentVolumes,
+  getFavoriteVolumes,
+  getRecentLimit,
+  getRecentVolumes,
+  RECENT_LIMIT_OPTIONS,
+  setRecentLimit,
+  subscribeLocalData,
+} from "../services/localDataService";
+
+const API_URL = import.meta.env.VITE_API_URL;
 
 function Settings() {
-  const [favoritesCount, setFavoritesCount] = useState(0);
-  const [recentCount, setRecentCount] = useState(0);
+  const recentVolumes = useSyncExternalStore(
+    subscribeLocalData,
+    getRecentVolumes,
+    getRecentVolumes,
+  );
+
+  const favoriteVolumes = useSyncExternalStore(
+    subscribeLocalData,
+    getFavoriteVolumes,
+    getFavoriteVolumes,
+  );
+
+  const recentCount = recentVolumes.length;
+  const favoriteCount = favoriteVolumes.length;
+
+  const [recentLimit, setRecentLimitState] = useState(getRecentLimit());
+  const [confirmClearRecent, setConfirmClearRecent] = useState(false);
+  const [confirmClearFavorites, setConfirmClearFavorites] = useState(false);
+  const [apiStatus, setApiStatus] = useState("checking");
 
   useEffect(() => {
-    const favorites =
-      JSON.parse(
-        localStorage.getItem("favoriteVolumes")
-      ) || [];
+    async function checkApi() {
+      try {
+        const response = await fetch(`${API_URL}/`);
 
-    const recent =
-      JSON.parse(
-        localStorage.getItem("recentVolumes")
-      ) || [];
+        if (!response.ok) {
+          setApiStatus("offline");
+          return;
+        }
 
-    setFavoritesCount(favorites.length);
-    setRecentCount(recent.length);
+        setApiStatus("online");
+      } catch {
+        setApiStatus("offline");
+      }
+    }
+
+    checkApi();
   }, []);
 
-  function clearFavorites() {
-    const confirmed = window.confirm(
-      "Deseja remover todos os favoritos?"
-    );
+  function handleRecentLimitChange(event) {
+    const limit = Number(event.target.value);
 
-    if (!confirmed) return;
-
-    localStorage.removeItem(
-      "favoriteVolumes"
-    );
-
-    setFavoritesCount(0);
+    setRecentLimit(limit);
+    setRecentLimitState(limit);
   }
 
-  function clearRecent() {
-    const confirmed = window.confirm(
-      "Deseja limpar o histórico recente?"
-    );
+  function handleClearRecent() {
+    clearRecentVolumes();
+    setConfirmClearRecent(false);
+  }
 
-    if (!confirmed) return;
-
-    localStorage.removeItem(
-      "recentVolumes"
-    );
-
-    setRecentCount(0);
+  function handleClearFavorites() {
+    clearFavoriteVolumes();
+    setConfirmClearFavorites(false);
   }
 
   return (
-    <div className="max-w-4xl mx-auto">
-      <h1 className="text-4xl font-bold mb-2">
-        Configurações
-      </h1>
+    <div className="max-w-2xl space-y-8">
+      <div>
+        <h1 className="text-4xl font-bold mb-2">Configurações</h1>
 
-      <p className="text-zinc-400 mb-8">
-        Informações e gerenciamento do Babel
-        Notions.
-      </p>
-
-      <div className="grid grid-cols-2 gap-6 mb-8">
-        <div className="bg-zinc-900 border border-zinc-800 rounded-2xl p-6">
-          <p className="text-zinc-500 text-sm">
-            Favoritos
-          </p>
-
-          <h2 className="text-3xl font-bold mt-2">
-            {favoritesCount}
-          </h2>
-
-          <button
-            onClick={clearFavorites}
-            className="mt-4 bg-red-900 hover:bg-red-800 px-4 py-2 rounded-lg text-sm transition cursor-pointer"
-          >
-            Limpar favoritos
-          </button>
-        </div>
-
-        <div className="bg-zinc-900 border border-zinc-800 rounded-2xl p-6">
-          <p className="text-zinc-500 text-sm">
-            Recentes
-          </p>
-
-          <h2 className="text-3xl font-bold mt-2">
-            {recentCount}
-          </h2>
-
-          <button
-            onClick={clearRecent}
-            className="mt-4 bg-red-900 hover:bg-red-800 px-4 py-2 rounded-lg text-sm transition cursor-pointer"
-          >
-            Limpar recentes
-          </button>
-        </div>
+        <p className="text-zinc-400">
+          Preferências locais do navegador e informações do app.
+        </p>
       </div>
 
-      <div className="bg-zinc-900 border border-zinc-800 rounded-2xl p-6">
-        <h2 className="text-xl font-bold mb-4">
-          Informações do Sistema
-        </h2>
+      <section className="card space-y-6">
+        <div>
+          <h2 className="text-xl font-bold mb-1">Sidebar</h2>
 
-        <div className="space-y-3 text-zinc-300">
-          <p>
-            <strong>Projeto:</strong>{" "}
-            Babel Notions
-          </p>
-
-          <p>
-            <strong>Versão:</strong> 1.0
-          </p>
-
-          <p>
-            <strong>Frontend:</strong>{" "}
-            React + Vite
-          </p>
-
-          <p>
-            <strong>Backend:</strong>{" "}
-            Node.js + Express
-          </p>
-
-          <p>
-            <strong>Banco:</strong>{" "}
-            PostgreSQL + Prisma
-          </p>
-
-          <p>
-            <strong>API:</strong>{" "}
-            {import.meta.env.VITE_API_URL}
+          <p className="text-zinc-400 text-sm">
+            Dados salvos apenas neste navegador.
           </p>
         </div>
-      </div>
+
+        <div>
+          <label
+            htmlFor="recent-limit"
+            className="block text-sm font-medium text-zinc-300 mb-2"
+          >
+            Limite de volumes recentes
+          </label>
+
+          <select
+            id="recent-limit"
+            value={recentLimit}
+            onChange={handleRecentLimitChange}
+            className="input max-w-xs cursor-pointer"
+          >
+            {RECENT_LIMIT_OPTIONS.map((option) => (
+              <option key={option} value={option}>
+                {option} volumes
+              </option>
+            ))}
+          </select>
+        </div>
+
+        <div className="flex flex-col gap-4 pt-2 border-t border-zinc-800">
+          <div className="flex items-center justify-between gap-4 flex-wrap">
+            <div>
+              <p className="font-medium">Volumes recentes</p>
+
+              <p className="text-zinc-500 text-sm">
+                {recentCount} {recentCount === 1 ? "item" : "itens"} na sidebar
+              </p>
+            </div>
+
+            {confirmClearRecent ? (
+              <div className="flex items-center gap-2 flex-wrap">
+                <span className="text-sm text-zinc-400">Tem certeza?</span>
+
+                <button
+                  onClick={handleClearRecent}
+                  className="btn-danger"
+                  disabled={recentCount === 0}
+                >
+                  Sim, limpar
+                </button>
+
+                <button
+                  onClick={() => setConfirmClearRecent(false)}
+                  className="btn-secondary"
+                >
+                  Cancelar
+                </button>
+              </div>
+            ) : (
+              <button
+                onClick={() => {
+                  setConfirmClearFavorites(false);
+                  setConfirmClearRecent(true);
+                }}
+                className="btn-secondary"
+                disabled={recentCount === 0}
+              >
+                Limpar recentes
+              </button>
+            )}
+          </div>
+
+          <div className="flex items-center justify-between gap-4 flex-wrap">
+            <div>
+              <p className="font-medium">Favoritos</p>
+
+              <p className="text-zinc-500 text-sm">
+                {favoriteCount}{" "}
+                {favoriteCount === 1 ? "favorito" : "favoritos"} na sidebar
+              </p>
+            </div>
+
+            {confirmClearFavorites ? (
+              <div className="flex items-center gap-2 flex-wrap">
+                <span className="text-sm text-zinc-400">Tem certeza?</span>
+
+                <button
+                  onClick={handleClearFavorites}
+                  className="btn-danger"
+                  disabled={favoriteCount === 0}
+                >
+                  Sim, limpar
+                </button>
+
+                <button
+                  onClick={() => setConfirmClearFavorites(false)}
+                  className="btn-secondary"
+                >
+                  Cancelar
+                </button>
+              </div>
+            ) : (
+              <button
+                onClick={() => {
+                  setConfirmClearRecent(false);
+                  setConfirmClearFavorites(true);
+                }}
+                className="btn-secondary"
+                disabled={favoriteCount === 0}
+              >
+                Limpar favoritos
+              </button>
+            )}
+          </div>
+        </div>
+      </section>
+
+      <section className="card space-y-4">
+        <h2 className="text-xl font-bold">Sobre</h2>
+
+        <dl className="space-y-3 text-sm">
+          <div className="flex justify-between gap-4">
+            <dt className="text-zinc-500">App</dt>
+            <dd className="text-zinc-200">Notions of Babel</dd>
+          </div>
+
+          <div className="flex justify-between gap-4">
+            <dt className="text-zinc-500">Versão</dt>
+            <dd className="text-zinc-200">0.0.0</dd>
+          </div>
+
+          <div className="flex justify-between gap-4">
+            <dt className="text-zinc-500">API</dt>
+            <dd>
+              {apiStatus === "checking" && (
+                <span className="text-zinc-400">Verificando...</span>
+              )}
+
+              {apiStatus === "online" && (
+                <span className="text-green-400">Online</span>
+              )}
+
+              {apiStatus === "offline" && (
+                <span className="text-red-400">Offline</span>
+              )}
+            </dd>
+          </div>
+
+          <div className="flex justify-between gap-4">
+            <dt className="text-zinc-500">Endpoint</dt>
+            <dd className="text-zinc-400 truncate max-w-xs text-right">
+              {API_URL || "Não configurado"}
+            </dd>
+          </div>
+        </dl>
+
+        <Link
+          to="/"
+          className="inline-block text-zinc-400 hover:text-white transition-colors duration-200 cursor-pointer text-sm"
+        >
+          Ir para Home
+        </Link>
+      </section>
     </div>
   );
 }

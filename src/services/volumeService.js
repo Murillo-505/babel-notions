@@ -1,6 +1,12 @@
 // const API_URL = "http://localhost:3000";
 const API_URL = import.meta.env.VITE_API_URL;
 
+export async function getVolumeById(id) {
+  const response = await fetch(`${API_URL}/volumes/${id}`);
+
+  return response.json();
+}
+
 export async function createVolume(volume) {
   const response = await fetch(`${API_URL}/volumes`, {
     method: "POST",
