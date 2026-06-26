@@ -1,5 +1,3 @@
-// @ts-ignore
-import "dotenv/config";
 import { defineConfig } from "prisma/config";
 
 export default defineConfig({
@@ -10,6 +8,8 @@ export default defineConfig({
   },
 
   datasource: {
-    url: "file:../dev.db",
+    url:
+      process.env.DATABASE_URL ??
+      "postgresql://postgres:postgres@localhost:5432/babel_notions",
   },
 });
